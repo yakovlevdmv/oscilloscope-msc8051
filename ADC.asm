@@ -461,10 +461,10 @@ _readSPI:
 
 _delay:
 ;ADC.c,238 :: 		void delay() {
-;ADC.c,239 :: 		Delay_ms(500);
-	MOV R5, 4
-	MOV R6, 43
-	MOV R7, 157
+;ADC.c,239 :: 		Delay_ms(1000);
+	MOV R5, 7
+	MOV R6, 86
+	MOV R7, 60
 	DJNZ R7, 
 	DJNZ R6, 
 	DJNZ R5, 
@@ -634,18 +634,20 @@ L__getBit58:
 ; end of _getBit
 
 _parseADCValue:
-;ADC.c,287 :: 		int parseADCValue(struct rcv_data adc_data) {
+;ADC.c,287 :: 		int parseADCValue(struct rcv_data *adc_data) {
 ;ADC.c,288 :: 		int result = 0b000000000000;
 	MOV parseADCValue_result_L0+0, #0
 	MOV parseADCValue_result_L0+1, #0
 	MOV parseADCValue_i_L0+0, #0
 	MOV parseADCValue_i_L0+1, #0
 ;ADC.c,289 :: 		int i = 0;
-;ADC.c,291 :: 		result += getBit(0, adc_data.first);
+;ADC.c,291 :: 		result += getBit(0, adc_data->first);
 	MOV FARG_getBit_position+0, #0
 	MOV FARG_getBit_position+1, #0
-	MOV FARG_getBit_byte+0, FARG_parseADCValue_adc_data+0
-	MOV A, FARG_parseADCValue_adc_data+0
+	MOV R0, FARG_parseADCValue_adc_data+0
+	MOV 1, @R0
+	MOV FARG_getBit_byte+0, 1
+	MOV A, R1
 	RLC A
 	CLR A
 	SUBB A, 224
@@ -685,11 +687,14 @@ L__parseADCValue61:
 L__parseADCValue60:
 	DJNZ R0, L__parseADCValue61
 	MOV parseADCValue_result_L0+0, A
-;ADC.c,296 :: 		result += getBit(i, adc_data.second);
+;ADC.c,296 :: 		result += getBit(i, adc_data->second);
 	MOV FARG_getBit_position+0, parseADCValue_i_L0+0
 	MOV FARG_getBit_position+1, parseADCValue_i_L0+1
-	MOV FARG_getBit_byte+0, FARG_parseADCValue_adc_data+1
-	MOV A, FARG_parseADCValue_adc_data+1
+	MOV A, FARG_parseADCValue_adc_data+0
+	ADD A, #1
+	MOV R0, A
+	MOV FARG_getBit_byte+0, @R0
+	MOV A, @R0
 	RLC A
 	CLR A
 	SUBB A, 224
@@ -740,11 +745,14 @@ L__parseADCValue63:
 L__parseADCValue62:
 	DJNZ R0, L__parseADCValue63
 	MOV parseADCValue_result_L0+0, A
-;ADC.c,301 :: 		result += getBit(i, adc_data.third);
+;ADC.c,301 :: 		result += getBit(i, adc_data->third);
 	MOV FARG_getBit_position+0, parseADCValue_i_L0+0
 	MOV FARG_getBit_position+1, parseADCValue_i_L0+1
-	MOV FARG_getBit_byte+0, FARG_parseADCValue_adc_data+2
-	MOV A, FARG_parseADCValue_adc_data+2
+	MOV A, FARG_parseADCValue_adc_data+0
+	ADD A, #2
+	MOV R0, A
+	MOV FARG_getBit_byte+0, @R0
+	MOV A, @R0
 	RLC A
 	CLR A
 	SUBB A, 224
@@ -944,13 +952,6 @@ L_itoa39:
 _main:
 	MOV SP+0, #128
 ;ADC.c,347 :: 		void main() {
-;ADC.c,348 :: 		char ch0[] = "channel 1\n\0";
-	MOV 130, #?ICSmain_ch0_L0+0
-	MOV 131, hi(#?ICSmain_ch0_L0+0)
-	MOV R0, #main_ch0_L0+0
-	MOV R1, #12
-	LCALL ___CC2D+0
-;ADC.c,349 :: 		char ch1[] = "channel 2\n\0";
 ;ADC.c,351 :: 		initSPI();
 	LCALL _initSPI+0
 ;ADC.c,352 :: 		rs232init();
@@ -961,13 +962,13 @@ _main:
 	NOP
 ;ADC.c,357 :: 		while(1) {
 L_main40:
-;ADC.c,358 :: 		adc_data = adc_get_data(0);
+;ADC.c,358 :: 		*adc_data = adc_get_data(0);
 	MOV FARG_adc_get_data_channel+0, #0
 	MOV FARG_adc_get_data_channel+1, #0
 	MOV R3, #FLOC__main+0
 	LCALL _adc_get_data+0
 	MOV R3, #3
-	MOV R0, #_adc_data+0
+	MOV R0, _adc_data+0
 	MOV R1, #FLOC__main+0
 L_main42:
 	MOV A, @R1
@@ -984,29 +985,35 @@ L_main42:
 	INC R1
 	MOV A, R3
 	JNZ L_main42
-	MOV _adc_data+0, FLOC__main+0
-	MOV _adc_data+1, FLOC__main+1
-;ADC.c,359 :: 		transmitString(ch0);
-	MOV FARG_transmitString_str+0, #main_ch0_L0+0
+	MOV R0, _adc_data+0
+	MOV @R0, FLOC__main+0
+	INC R0
+	MOV @R0, FLOC__main+1
+;ADC.c,359 :: 		adc_result = parseADCValue(adc_data);
+	MOV FARG_parseADCValue_adc_data+0, _adc_data+0
+	LCALL _parseADCValue+0
+	MOV main_adc_result_L0+0, 0
+	MOV main_adc_result_L0+1, 1
+;ADC.c,361 :: 		transmitString("channel 1 \0");
+	MOV FARG_transmitString_str+0, #?lstr1_ADC+0
 	LCALL _transmitString+0
-;ADC.c,361 :: 		transmit(adc_data.first);
-	MOV FARG_transmit_b+0, _adc_data+0
-	LCALL _transmit+0
-;ADC.c,362 :: 		transmit(adc_data.second);
-	MOV FARG_transmit_b+0, _adc_data+1
-	LCALL _transmit+0
-;ADC.c,363 :: 		transmit(adc_data.third);
-	MOV FARG_transmit_b+0, _adc_data+2
-	LCALL _transmit+0
-;ADC.c,365 :: 		Delay_ms(5000);
-	MOV R5, 32
-	MOV R6, 171
-	MOV R7, 57
+;ADC.c,363 :: 		itoa(adc_result, buffer);
+	MOV FARG_itoa_n+0, main_adc_result_L0+0
+	MOV FARG_itoa_n+1, main_adc_result_L0+1
+	MOV FARG_itoa_s+0, #main_buffer_L0+0
+	LCALL _itoa+0
+;ADC.c,364 :: 		transmitString(buffer);
+	MOV FARG_transmitString_str+0, #main_buffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,365 :: 		Delay_ms(1100);
+	MOV R5, 7
+	MOV R6, 248
+	MOV R7, 93
 	DJNZ R7, 
 	DJNZ R6, 
 	DJNZ R5, 
-;ADC.c,374 :: 		}
+;ADC.c,397 :: 		}
 	SJMP L_main40
-;ADC.c,375 :: 		}
+;ADC.c,398 :: 		}
 	SJMP #254
 ; end of _main

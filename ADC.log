@@ -1,9 +1,0 @@
-0	1	mikroc8051.exe -MSF -DBG -pAT89S8253 -ES -DL -O11111114 -fo10 -N"D:\Projects\TUV\oscilloscope-msc8051\ADC.mcp51" -SP"D:\Program Files (x86)\mikroC PRO for 8051\defs\" -SP"D:\Projects\TUV\oscilloscope-msc8051\" -SP"D:\Program Files (x86)\mikroC PRO for 8051\Uses\ATMEL\" -SP"C:\Program Files\Mikroelektronika\mikroC PRO for 8051\defs\" -SP"C:\Generator\" -SP"C:\Program Files\Mikroelektronika\mikroC PRO for 8051\Uses\ATMEL\" "ADC.c" "__Lib_Math.mcl" "__Lib_MathDouble.mcl" "__Lib_System.mcl" "__Lib_Delays.mcl"	 
-warning: 0	1501	Specified search path does not exist: 'C:\Program Files\Mikroelektronika\mikroC PRO for 8051\defs'	 
-warning: 0	1501	Specified search path does not exist: 'C:\Generator'	 
-warning: 0	1501	Specified search path does not exist: 'C:\Program Files\Mikroelektronika\mikroC PRO for 8051\Uses\ATMEL'	 
-diagnostics: 0	122	Compilation Started	stdlib.h
-error: 363	320	Cannot assign '' to 'adc_data'	ADC.c
-warning: 365	1506	Implicit conversion of pointer to int	ADC.c
-hint: 352	1163	Variable 'b' has been declared, but not used	ADC.c
-error: 0	102	Finished (with errors): 27 фев 2018, 15:57:23	ADC.mcp51

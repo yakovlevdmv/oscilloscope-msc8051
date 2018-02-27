@@ -1,4 +1,7 @@
 # Ignore everyrhing
 
 #except
-*.c
+!*.c
+!README.md
+!*.asm
+!*.hex
