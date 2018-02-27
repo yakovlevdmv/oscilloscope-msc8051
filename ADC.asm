@@ -812,8 +812,8 @@ L_parseADCValue32:
 ; end of _parseADCValue
 
 _reverse:
-;ADC.c,325 :: 		void reverse(char s[])
-;ADC.c,330 :: 		for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+;ADC.c,325 :: 		void reverse(char s[]) {
+;ADC.c,329 :: 		for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
 	MOV reverse_i_L0+0, #0
 	MOV reverse_i_L0+1, #0
 	MOV FARG_strlen_s+0, FARG_reverse_s+0
@@ -836,23 +836,23 @@ L_reverse34:
 	XRL A, #128
 	SUBB A, R0
 	JNC L_reverse35
-;ADC.c,331 :: 		c = s[i];
+;ADC.c,330 :: 		c = s[i];
 	MOV A, FARG_reverse_s+0
 	ADD A, reverse_i_L0+0
 	MOV R0, A
 	MOV reverse_c_L0+0, @R0
-;ADC.c,332 :: 		s[i] = s[j];
+;ADC.c,331 :: 		s[i] = s[j];
 	MOV A, FARG_reverse_s+0
 	ADD A, reverse_j_L0+0
 	MOV R1, A
 	MOV A, @R1
 	MOV @R0, A
-;ADC.c,333 :: 		s[j] = c;
+;ADC.c,332 :: 		s[j] = c;
 	MOV A, FARG_reverse_s+0
 	ADD A, reverse_j_L0+0
 	MOV R0, A
 	MOV @R0, reverse_c_L0+0
-;ADC.c,330 :: 		for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+;ADC.c,329 :: 		for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
 	MOV A, #1
 	ADD A, reverse_i_L0+0
 	MOV reverse_i_L0+0, A
@@ -866,16 +866,16 @@ L_reverse34:
 	MOV A, reverse_j_L0+1
 	SUBB A, #0
 	MOV reverse_j_L0+1, A
-;ADC.c,334 :: 		}
+;ADC.c,333 :: 		}
 	SJMP L_reverse34
 L_reverse35:
-;ADC.c,335 :: 		}
+;ADC.c,334 :: 		}
 	RET
 ; end of _reverse
 
 _itoa:
-;ADC.c,338 :: 		void itoa(int n, char s[])
-;ADC.c,342 :: 		if ((sign = n) < 0)  /* записываем знак */
+;ADC.c,337 :: 		void itoa(int n, char s[])
+;ADC.c,341 :: 		if ((sign = n) < 0)  /* записываем знак */
 	MOV itoa_sign_L0+0, FARG_itoa_n+0
 	MOV itoa_sign_L0+1, FARG_itoa_n+1
 	CLR C
@@ -888,7 +888,7 @@ _itoa:
 	XRL A, #128
 	SUBB A, R0
 	JNC L_itoa37
-;ADC.c,343 :: 		n = -n;          /* делаем n положительным числом */
+;ADC.c,342 :: 		n = -n;          /* делаем n положительным числом */
 	CLR C
 	MOV A, #0
 	SUBB A, FARG_itoa_n+0
@@ -897,12 +897,12 @@ _itoa:
 	SUBB A, FARG_itoa_n+1
 	MOV FARG_itoa_n+1, A
 L_itoa37:
-;ADC.c,344 :: 		i = 0;
+;ADC.c,343 :: 		i = 0;
 	MOV itoa_i_L0+0, #0
 	MOV itoa_i_L0+1, #0
-;ADC.c,345 :: 		do {       /* генерируем цифры в обратном порядке */
+;ADC.c,344 :: 		do {       /* генерируем цифры в обратном порядке */
 L_itoa38:
-;ADC.c,346 :: 		s[i++] = n % 10 + '0';   /* берем следующую цифру */
+;ADC.c,345 :: 		s[i++] = n % 10 + '0';   /* берем следующую цифру */
 	MOV A, FARG_itoa_s+0
 	ADD A, itoa_i_L0+0
 	MOV R0, A
@@ -925,7 +925,7 @@ L_itoa38:
 	MOV A, #0
 	ADDC A, itoa_i_L0+1
 	MOV itoa_i_L0+1, A
-;ADC.c,347 :: 		} while ((n /= 10) > 0);     /* удаляем */
+;ADC.c,346 :: 		} while ((n /= 10) > 0);     /* удаляем */
 	MOV R4, #10
 	MOV R5, #0
 	MOV R0, FARG_itoa_n+0
@@ -943,7 +943,7 @@ L_itoa38:
 	XRL A, #128
 	SUBB A, R2
 	JNC L_itoa38
-;ADC.c,348 :: 		if (sign < 0)
+;ADC.c,347 :: 		if (sign < 0)
 	CLR C
 	MOV A, itoa_sign_L0+0
 	SUBB A, #0
@@ -954,7 +954,7 @@ L_itoa38:
 	XRL A, #128
 	SUBB A, R0
 	JNC L_itoa41
-;ADC.c,349 :: 		s[i++] = '-';
+;ADC.c,348 :: 		s[i++] = '-';
 	MOV A, FARG_itoa_s+0
 	ADD A, itoa_i_L0+0
 	MOV R0, A
@@ -966,21 +966,21 @@ L_itoa38:
 	ADDC A, itoa_i_L0+1
 	MOV itoa_i_L0+1, A
 L_itoa41:
-;ADC.c,350 :: 		s[i] = '\0';
+;ADC.c,349 :: 		s[i] = '\0';
 	MOV A, FARG_itoa_s+0
 	ADD A, itoa_i_L0+0
 	MOV R0, A
 	MOV @R0, #0
-;ADC.c,351 :: 		reverse(s);
+;ADC.c,350 :: 		reverse(s);
 	MOV FARG_reverse_s+0, FARG_itoa_s+0
 	LCALL _reverse+0
-;ADC.c,352 :: 		}
+;ADC.c,351 :: 		}
 	RET
 ; end of _itoa
 
 _getInputValue:
-;ADC.c,357 :: 		float getInputValue(int _data) {
-;ADC.c,359 :: 		result = 4.096 * _data / 4096;
+;ADC.c,356 :: 		float getInputValue(int _data) {
+;ADC.c,358 :: 		result = 4.096 * _data / 4096;
 	MOV R0, FARG_getInputValue__data+0
 	MOV R1, FARG_getInputValue__data+1
 	LCALL _Int2Double+0
@@ -994,14 +994,14 @@ _getInputValue:
 	MOV R6, #128
 	MOV 7, #69
 	LCALL _Div_32x32_FP+0
-;ADC.c,360 :: 		return result;
-;ADC.c,361 :: 		}
+;ADC.c,359 :: 		return result;
+;ADC.c,360 :: 		}
 	RET
 ; end of _getInputValue
 
 _getGain:
-;ADC.c,371 :: 		float getGain(int _data) {
-;ADC.c,373 :: 		k = 2 * _data / 1000;
+;ADC.c,370 :: 		float getGain(int _data) {
+;ADC.c,372 :: 		k = 2 * _data / 1000;
 	MOV R2, #1
 	MOV R1, FARG_getGain__data+1
 	MOV A, FARG_getGain__data+0
@@ -1020,14 +1020,14 @@ L__getGain67:
 	MOV R5, #3
 	LCALL _Div_16x16_S+0
 	LCALL _Int2Double+0
-;ADC.c,374 :: 		return k;
-;ADC.c,375 :: 		}
+;ADC.c,373 :: 		return k;
+;ADC.c,374 :: 		}
 	RET
 ; end of _getGain
 
 _main:
 	MOV SP+0, #128
-;ADC.c,377 :: 		void main() {
+;ADC.c,376 :: 		void main() {
 ;ADC.c,385 :: 		initSPI(); //Инициализация SPI
 	LCALL _initSPI+0
 ;ADC.c,386 :: 		rs232init(); // Инициализация RS232
@@ -1081,38 +1081,38 @@ L_main44:
 ;ADC.c,405 :: 		transmitStringln("channel 0\0");
 	MOV FARG_transmitStringln_str+0, #?lstr1_ADC+0
 	LCALL _transmitStringln+0
-;ADC.c,407 :: 		itoa(adc_result, out_buffer); // Результат АЦП к строковому представлению
+;ADC.c,408 :: 		itoa(adc_result, buffer);
 	MOV FARG_itoa_n+0, main_adc_result_L0+0
 	MOV FARG_itoa_n+1, main_adc_result_L0+1
-	MOV FARG_itoa_s+0, #main_out_buffer_L0+0
+	MOV FARG_itoa_s+0, #main_buffer_L0+0
 	LCALL _itoa+0
-;ADC.c,408 :: 		transmitString("ADC result: ");
+;ADC.c,409 :: 		transmitString("ADC result: ");
 	MOV FARG_transmitString_str+0, #?lstr2_ADC+0
 	LCALL _transmitString+0
-;ADC.c,409 :: 		transmitStringln(out_buffer);   //Передача в RS232
-	MOV FARG_transmitStringln_str+0, #main_out_buffer_L0+0
+;ADC.c,411 :: 		transmitStringln(buffer);
+	MOV FARG_transmitStringln_str+0, #main_buffer_L0+0
 	LCALL _transmitStringln+0
-;ADC.c,410 :: 		FloatToStr(inputValue, in_buffer);//Расчитанное входное значение к строковому представлению
+;ADC.c,413 :: 		FloatToStr(inputValue, buffer);
 	MOV FARG_FloatToStr_fnum+0, main_inputValue_L0+0
 	MOV FARG_FloatToStr_fnum+1, main_inputValue_L0+1
 	MOV FARG_FloatToStr_fnum+2, main_inputValue_L0+2
 	MOV FARG_FloatToStr_fnum+3, main_inputValue_L0+3
-	MOV FARG_FloatToStr_str+0, #main_in_buffer_L0+0
+	MOV FARG_FloatToStr_str+0, #main_buffer_L0+0
 	LCALL _FloatToStr+0
-;ADC.c,411 :: 		transmitString("ADC input: ");
+;ADC.c,414 :: 		transmitString("ADC input: ");
 	MOV FARG_transmitString_str+0, #?lstr3_ADC+0
 	LCALL _transmitString+0
-;ADC.c,412 :: 		transmitStringln(in_buffer);        // Передача в RS232
-	MOV FARG_transmitStringln_str+0, #main_in_buffer_L0+0
+;ADC.c,416 :: 		transmitStringln(buffer);
+	MOV FARG_transmitStringln_str+0, #main_buffer_L0+0
 	LCALL _transmitStringln+0
-;ADC.c,413 :: 		Delay_ms(1000);
+;ADC.c,417 :: 		Delay_ms(1000);
 	MOV R5, 7
 	MOV R6, 86
 	MOV R7, 60
 	DJNZ R7, 
 	DJNZ R6, 
 	DJNZ R5, 
-;ADC.c,415 :: 		*adc_data = adc_get_data(1);
+;ADC.c,419 :: 		*adc_data = adc_get_data(1);
 	MOV FARG_adc_get_data_channel+0, #1
 	MOV FARG_adc_get_data_channel+1, #0
 	MOV R3, #FLOC__main+0
@@ -1139,12 +1139,12 @@ L_main45:
 	MOV @R0, FLOC__main+0
 	INC R0
 	MOV @R0, FLOC__main+1
-;ADC.c,416 :: 		adc_result = parseADCValue(adc_data);
+;ADC.c,420 :: 		adc_result = parseADCValue(adc_data);
 	MOV FARG_parseADCValue_adc_data+0, _adc_data+0
 	LCALL _parseADCValue+0
 	MOV main_adc_result_L0+0, 0
 	MOV main_adc_result_L0+1, 1
-;ADC.c,417 :: 		inputValue = getInputValue(adc_result);
+;ADC.c,421 :: 		inputValue = getInputValue(adc_result);
 	MOV FARG_getInputValue__data+0, 0
 	MOV FARG_getInputValue__data+1, 1
 	LCALL _getInputValue+0
@@ -1152,42 +1152,42 @@ L_main45:
 	MOV main_inputValue_L0+1, 1
 	MOV main_inputValue_L0+2, 2
 	MOV main_inputValue_L0+3, 3
-;ADC.c,419 :: 		transmitStringln("channel 1 \0");
+;ADC.c,423 :: 		transmitStringln("channel 1 \0");
 	MOV FARG_transmitStringln_str+0, #?lstr4_ADC+0
 	LCALL _transmitStringln+0
-;ADC.c,421 :: 		itoa(adc_result, out_buffer);
+;ADC.c,426 :: 		itoa(adc_result, buffer);
 	MOV FARG_itoa_n+0, main_adc_result_L0+0
 	MOV FARG_itoa_n+1, main_adc_result_L0+1
-	MOV FARG_itoa_s+0, #main_out_buffer_L0+0
+	MOV FARG_itoa_s+0, #main_buffer_L0+0
 	LCALL _itoa+0
-;ADC.c,422 :: 		transmitString("ADC result: ");
+;ADC.c,427 :: 		transmitString("ADC result: ");
 	MOV FARG_transmitString_str+0, #?lstr5_ADC+0
 	LCALL _transmitString+0
-;ADC.c,423 :: 		transmitStringln(out_buffer);
-	MOV FARG_transmitStringln_str+0, #main_out_buffer_L0+0
+;ADC.c,429 :: 		transmitStringln(buffer);
+	MOV FARG_transmitStringln_str+0, #main_buffer_L0+0
 	LCALL _transmitStringln+0
-;ADC.c,424 :: 		FloatToStr(inputValue, in_buffer);
+;ADC.c,431 :: 		FloatToStr(inputValue, buffer);
 	MOV FARG_FloatToStr_fnum+0, main_inputValue_L0+0
 	MOV FARG_FloatToStr_fnum+1, main_inputValue_L0+1
 	MOV FARG_FloatToStr_fnum+2, main_inputValue_L0+2
 	MOV FARG_FloatToStr_fnum+3, main_inputValue_L0+3
-	MOV FARG_FloatToStr_str+0, #main_in_buffer_L0+0
+	MOV FARG_FloatToStr_str+0, #main_buffer_L0+0
 	LCALL _FloatToStr+0
-;ADC.c,425 :: 		transmitString("ADC input: ");
+;ADC.c,432 :: 		transmitString("ADC input: ");
 	MOV FARG_transmitString_str+0, #?lstr6_ADC+0
 	LCALL _transmitString+0
-;ADC.c,426 :: 		transmitStringln(in_buffer);
-	MOV FARG_transmitStringln_str+0, #main_in_buffer_L0+0
+;ADC.c,434 :: 		transmitStringln(buffer);
+	MOV FARG_transmitStringln_str+0, #main_buffer_L0+0
 	LCALL _transmitStringln+0
-;ADC.c,427 :: 		Delay_ms(1000);
+;ADC.c,435 :: 		Delay_ms(1000);
 	MOV R5, 7
 	MOV R6, 86
 	MOV R7, 60
 	DJNZ R7, 
 	DJNZ R6, 
 	DJNZ R5, 
-;ADC.c,428 :: 		}
+;ADC.c,436 :: 		}
 	LJMP L_main42
-;ADC.c,429 :: 		}
+;ADC.c,437 :: 		}
 	SJMP #254
 ; end of _main

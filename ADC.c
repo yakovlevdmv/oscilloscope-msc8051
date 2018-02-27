@@ -374,9 +374,10 @@ int parseADCValue(struct rcv_data *adc_data) {
  }
 
 void main() {
-     char out_buffer[6]; // Результат АЦП - строка
-     char in_buffer[6]; // Вход АЦП - строка
-     char k_buffer[6]; // Коэффициент усиления
+     char buffer[6];
+     //char out_buffer[6]; // Результат АЦП - строка
+     //char in_buffer[6]; // Вход АЦП - строка
+     //char k_buffer[6]; // Коэффициент усиления
      int adc_result; // Результат АЦП - число
      float inputValue; // Вход АЦП - число
      float k; // Коэффициент усиления - число
@@ -403,12 +404,16 @@ void main() {
               
               transmitStringln("channel 0\0");
 
-              itoa(adc_result, out_buffer); // Результат АЦП к строковому представлению
+              //itoa(adc_result, out_buffer); // Результат АЦП к строковому представлению
+              itoa(adc_result, buffer);
               transmitString("ADC result: ");
-              transmitStringln(out_buffer);   //Передача в RS232
-              FloatToStr(inputValue, in_buffer);//Расчитанное входное значение к строковому представлению
+              //transmitStringln(out_buffer);   //Передача в RS232
+              transmitStringln(buffer);
+              //FloatToStr(inputValue, in_buffer);//Расчитанное входное значение к строковому представлению
+              FloatToStr(inputValue, buffer);
               transmitString("ADC input: ");
-              transmitStringln(in_buffer);        // Передача в RS232
+              //transmitStringln(in_buffer);        // Передача в RS232
+              transmitStringln(buffer);
               Delay_ms(1000);
               
               *adc_data = adc_get_data(1);
@@ -417,12 +422,16 @@ void main() {
               
               transmitStringln("channel 1 \0");
 
-              itoa(adc_result, out_buffer);
+              //itoa(adc_result, out_buffer);
+              itoa(adc_result, buffer);
               transmitString("ADC result: ");
-              transmitStringln(out_buffer);
-              FloatToStr(inputValue, in_buffer);
+              //transmitStringln(out_buffer);
+              transmitStringln(buffer);
+              //FloatToStr(inputValue, in_buffer);
+              FloatToStr(inputValue, buffer);
               transmitString("ADC input: ");
-              transmitStringln(in_buffer);
+              //transmitStringln(in_buffer);
+              transmitStringln(buffer);
               Delay_ms(1000);
      }
 }
