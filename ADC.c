@@ -169,7 +169,7 @@ struct rcv_data {
        short first;
        short second;
        short third;
-} adc_data;
+} *adc_data;
 
 /*
   Инициализация АЦП.
@@ -236,7 +236,7 @@ int readSPI() {
   Задержка
 */
 void delay() {
-    Delay_ms(500);
+    Delay_ms(1000);
 }
 
 /*
@@ -284,21 +284,21 @@ int getBit(int position, int byte) {
     return (byte >> position) & 1;
 }
 
-int parseADCValue(struct rcv_data adc_data) {
+int parseADCValue(struct rcv_data *adc_data) {
     int result = 0b000000000000;
     int i = 0;
     //First byte
-    result += getBit(0, adc_data.first);
+    result += getBit(0, adc_data->first);
     //Second byte
 
     for(i = 7; i >= 0; i--) {
           result <<= 1;
-          result += getBit(i, adc_data.second);
+          result += getBit(i, adc_data->second);
     }
     //Third
     for (i = 7; i >=5; i--) {
         result <<= 1;
-        result += getBit(i, adc_data.third);
+        result += getBit(i, adc_data->third);
     }
     
     return result;
@@ -345,8 +345,6 @@ union {
  }
 
 void main() {
-     char ch0[] = "channel 1\n\0";
-     char ch1[] = "channel 2\n\0";
      char buffer[10];
      int adc_result;
      char b;
@@ -357,18 +355,37 @@ void main() {
      Delay_us(1);
 
      while(1) {
-              adc_data = adc_get_data(0);
-              transmitString(ch0);
-              
+              *adc_data = adc_get_data(0);
               adc_result = parseADCValue(adc_data);
+              
+              transmitString("channel 1 \0");
+              //Delay_ms(1000);
               itoa(adc_result, buffer);
+              transmitString(buffer);
+              Delay_ms(1100);
+
+              /*
+              transmitString("first byte");
+              itoa(adc_data->first, buffer);
               transmit(buffer);
+              delay();
+              
+              transmitString("second byte");
+              itoa(adc_data->second, buffer);
+              transmit(buffer);
+              delay();
+
+              transmitString("third byte");
+              itoa(adc_data->third, buffer);
+              transmit(buffer);
+              delay();     */
+
 
               //transmit(adc_data.first);
               //transmit(adc_data.second);
               //transmit(adc_data.third);
               
-              Delay_ms(5000);
+              //Delay_ms(5000);
               
 //              adc_data = adc_get_data(1);
 //              transmitString(ch0);
