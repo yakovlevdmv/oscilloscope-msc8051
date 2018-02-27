@@ -1,0 +1,8 @@
+main
+	__CC2D
+	initSPI
+	rs232init
+	adc_get_data
+		writeSPI
+		readSPI
+	transmit

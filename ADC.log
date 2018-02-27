@@ -1,0 +1,14 @@
+0	1	mikroc8051.exe -MSF -DBG -pAT89S8253 -ES -DL -O11111114 -fo10 -N"C:\Generator\ADC.mcp51" -SP"C:\Program Files\Mikroelektronika\mikroC PRO for 8051\defs\" -SP"C:\Generator\" -SP"C:\Program Files\Mikroelektronika\mikroC PRO for 8051\Uses\ATMEL\" "ADC.c" "__Lib_Math.mcl" "__Lib_MathDouble.mcl" "__Lib_System.mcl" "__Lib_Delays.mcl"	 
+hint: 31	1354	 warning: "/*" within comment	C:\Generator\ADC.c
+diagnostics: 0	122	Compilation Started	ADC.c
+hint: 270	1163	Variable 'b' has been declared, but not used	ADC.c
+diagnostics: 349	123	Compiled Successfully	ADC.c
+diagnostics: 0	127	All files Compiled in 31 ms	 
+hint: 0	1144	Used BDATA RAM (bytes): 0 (1%) Free BDATA RAM (bytes): 16 (99%)	Used BDATA RAM (bytes): 0 (1%) Free BDATA RAM (bytes): 16 (99%)
+hint: 0	1144	Used DATA RAM (bytes): 16 (15%) Free DATA RAM (bytes): 88 (85%)	Used DATA RAM (bytes): 16 (15%) Free DATA RAM (bytes): 88 (85%)
+hint: 0	1144	Used IDATA RAM (bytes): 0 (1%) Free IDATA RAM (bytes): 128 (99%)	Used IDATA RAM (bytes): 0 (1%) Free IDATA RAM (bytes): 128 (99%)
+hint: 0	1144	Used ROM (bytes): 370 (3%)  Free ROM (bytes): 11918 (97%)	Used ROM (bytes): 370 (3%)  Free ROM (bytes): 11918 (97%)
+diagnostics: 0	125	Project Linked Successfully	ADC.mcp51
+diagnostics: 0	128	Linked in 31 ms	 
+diagnostics: 0	129	Project 'ADC.mcp51' completed: 94 ms	 
+diagnostics: 0	103	Finished successfully: 27 фев 2018, 11:36:50	ADC.mcp51
