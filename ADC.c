@@ -1,6 +1,5 @@
-#include "stdio.h"
-#include <stdlib.h>
-#include <string.h>
+//Опорное напряжение АЦП
+const float VREF = 4.096;
 
 //Бит chip select для АЦП MCP3204
 sbit CS at P2_0_bit;
@@ -258,8 +257,7 @@ struct rcv_data adc_get_data(int channel) {
          } else if(channel == 3) {
                     SPI_init_data += 0b00011000;
          }
-         P0 = SPI_init_data;
-         CS = 0; //Включение АЦП
+         P0 = SPI_init_data;//Вывод режима работы АЦП на порт 0
          
          /*
            Отправка данных через SPI для установки режима и запуска АЦП
@@ -310,13 +308,8 @@ int parseADCValue(struct rcv_data *adc_data) {
     return result;
 }
 
-union {
-      int source;
-      char tgt[sizeof(int)];
-} converter;
-
  /*
-     Следующие функциии реализуют преобразования int в строку
+     Следующие 2 функциии реализуют преобразования int в строку
      Источник https://ru.wikipedia.org/wiki/Itoa_(Си)
  */
 
@@ -349,6 +342,10 @@ union {
      s[i] = '\0';
      reverse(s);
  }
+ 
+ float getInputValue(int adc_result) {
+       return adc_result * VREF / 4096;
+ }
 
 void main() {
      char buffer[10];
@@ -378,36 +375,5 @@ void main() {
               itoa(adc_result, buffer);
               transmitString(buffer);
               Delay_ms(1000);
-
-              /*
-              transmitString("first byte");
-              itoa(adc_data->first, buffer);
-              transmit(buffer);
-              delay();
-              
-              transmitString("second byte");
-              itoa(adc_data->second, buffer);
-              transmit(buffer);
-              delay();
-
-              transmitString("third byte");
-              itoa(adc_data->third, buffer);
-              transmit(buffer);
-              delay();     */
-
-
-              //transmit(adc_data.first);
-              //transmit(adc_data.second);
-              //transmit(adc_data.third);
-              
-              //Delay_ms(5000);
-              
-//              adc_data = adc_get_data(1);
-//              transmitString(ch0);
-//              transmit(adc_data.first);
-//              transmit(adc_data.second);
-//              transmit(adc_data.third);
-//
-//              Delay_ms(2000);
      }
 }
