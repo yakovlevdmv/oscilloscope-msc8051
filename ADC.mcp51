@@ -31,10 +31,13 @@ Count=0
 [OTHER_FILES]
 Count=0
 [SEARCH_PATH]
-Count=3
-Path0=C:\Program Files\Mikroelektronika\mikroC PRO for 8051\defs\
-Path1=C:\Generator\
-Path2=C:\Program Files\Mikroelektronika\mikroC PRO for 8051\Uses\ATMEL\
+Count=6
+Path0=D:\Program Files (x86)\mikroC PRO for 8051\defs\
+Path1=D:\Projects\TUV\oscilloscope-msc8051\
+Path2=D:\Program Files (x86)\mikroC PRO for 8051\Uses\ATMEL\
+Path3=C:\Program Files\Mikroelektronika\mikroC PRO for 8051\defs\
+Path4=C:\Generator\
+Path5=C:\Program Files\Mikroelektronika\mikroC PRO for 8051\Uses\ATMEL\
 [HEADER_PATH]
 Count=0
 [HEADERS]

@@ -1,3 +1,7 @@
+#include "stdio.h"
+#include <stdlib.h>
+#include <string.h>
+
 //Бит chip select для АЦП MCP3204
 sbit CS at P2_0_bit;
 
@@ -203,6 +207,15 @@ void transmit(char b) {
 
 }
 
+void transmitString(char* str) {
+       char ch = str[0];
+       char *p = &str[0];
+
+       while (*p) {
+            transmit(*(p++));
+       }
+}
+
 /*
   Запись в SPI интерфейс
 */
@@ -267,7 +280,75 @@ struct rcv_data adc_get_data(int channel) {
          return _data;
 }
 
+int getBit(int position, int byte) {
+    return (byte >> position) & 1;
+}
+
+int parseADCValue(struct rcv_data adc_data) {
+    int result = 0b000000000000;
+    int i = 0;
+    //First byte
+    result += getBit(0, adc_data.first);
+    //Second byte
+
+    for(i = 7; i >= 0; i--) {
+          result <<= 1;
+          result += getBit(i, adc_data.second);
+    }
+    //Third
+    for (i = 7; i >=5; i--) {
+        result <<= 1;
+        result += getBit(i, adc_data.third);
+    }
+    
+    return result;
+}
+
+union {
+      int source;
+      char tgt[sizeof(int)];
+} converter;
+
+ /*
+     Следующие функциии реализуют преобразования int в строку
+     Источник https://ru.wikipedia.org/wiki/Itoa_(Си)
+ */
+
+ /* reverse:  переворачивает строку s на месте */
+ void reverse(char s[])
+ {
+     int i, j;
+     char c;
+
+     for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
+         c = s[i];
+         s[i] = s[j];
+         s[j] = c;
+     }
+ }
+
+ /* itoa:  конвертируем n в символы в s */
+ void itoa(int n, char s[])
+ {
+     int i, sign;
+
+     if ((sign = n) < 0)  /* записываем знак */
+         n = -n;          /* делаем n положительным числом */
+     i = 0;
+     do {       /* генерируем цифры в обратном порядке */
+         s[i++] = n % 10 + '0';   /* берем следующую цифру */
+     } while ((n /= 10) > 0);     /* удаляем */
+     if (sign < 0)
+         s[i++] = '-';
+     s[i] = '\0';
+     reverse(s);
+ }
+
 void main() {
+     char ch0[] = "channel 1\n\0";
+     char ch1[] = "channel 2\n\0";
+     char buffer[10];
+     int adc_result;
      char b;
      initSPI();
      rs232init();
@@ -277,19 +358,24 @@ void main() {
 
      while(1) {
               adc_data = adc_get_data(0);
-              transmit(0x00);
-              transmit(adc_data.first);
-              transmit(adc_data.second);
-              transmit(adc_data.third);
+              transmitString(ch0);
+              
+              adc_result = parseADCValue(adc_data);
+              itoa(adc_result, buffer);
+              transmit(buffer);
 
-              Delay_ms(2000);
+              //transmit(adc_data.first);
+              //transmit(adc_data.second);
+              //transmit(adc_data.third);
               
-              adc_data = adc_get_data(1);
-              transmit(0x01);
-              transmit(adc_data.first);
-              transmit(adc_data.second);
-              transmit(adc_data.third);
+              Delay_ms(5000);
               
-              Delay_ms(2000);
+//              adc_data = adc_get_data(1);
+//              transmitString(ch0);
+//              transmit(adc_data.first);
+//              transmit(adc_data.second);
+//              transmit(adc_data.third);
+//
+//              Delay_ms(2000);
      }
 }

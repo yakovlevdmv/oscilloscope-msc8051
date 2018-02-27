@@ -33,6 +33,7 @@ c_t2
 c_t2_bit
 clkreg
 compare_double
+converter
 count
 cp_rl2
 cp_rl2_bit
@@ -121,6 +122,7 @@ gate0_bit
 gate1
 gate1_bit
 get_fosc_khz
+getbit
 gf0
 gf0_bit
 gf1
@@ -146,6 +148,7 @@ it0
 it0_bit
 it1
 it1_bit
+itoa
 ivt_addr_es
 ivt_addr_et0
 ivt_addr_et1
@@ -261,6 +264,7 @@ p3_6
 p3_6_bit
 p3_7
 p3_7_bit
+parseadcvalue
 pcon
 pd
 pd_bit
@@ -319,6 +323,7 @@ readdata
 readspi
 ren
 ren_bit
+reverse
 ri
 ri_bit
 rs0
@@ -344,6 +349,7 @@ smod0
 smod0_bit
 smod1
 smod1_bit
+source
 sp
 spcr
 spd0
@@ -390,6 +396,7 @@ tf1
 tf1_bit
 tf2
 tf2_bit
+tgt
 th0
 th1
 th2
@@ -407,6 +414,7 @@ tr1_bit
 tr2
 tr2_bit
 transmit
+transmitstring
 vdelay_ms
 wcol
 wcol_bit
