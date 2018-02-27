@@ -1,7 +1,3 @@
-#include "stdio.h"
-#include <stdlib.h>
-#include <string.h>
-
 //Бит chip select для АЦП MCP3204
 sbit CS at P2_0_bit;
 
@@ -214,6 +210,16 @@ void transmitString(char* str) {
        while (*p) {
             transmit(*(p++));
        }
+}
+
+void transmitStringln(char* str) {
+       char ch = str[0];
+       char *p = &str[0];
+
+       while (*p) {
+            transmit(*(p++));
+       }
+       
        //New line CRLF
        transmit('\r');
        transmit('\n');
@@ -310,19 +316,13 @@ int parseADCValue(struct rcv_data *adc_data) {
     return result;
 }
 
-union {
-      int source;
-      char tgt[sizeof(int)];
-} converter;
-
  /*
      Следующие функциии реализуют преобразования int в строку
      Источник https://ru.wikipedia.org/wiki/Itoa_(Си)
  */
 
  /* reverse:  переворачивает строку s на месте */
- void reverse(char s[])
- {
+ void reverse(char s[]) {
      int i, j;
      char c;
 
@@ -349,65 +349,80 @@ union {
      s[i] = '\0';
      reverse(s);
  }
+ 
+ /*
+   Расчет входного значения АЦП на основе его выходных данных
+ */
+ float getInputValue(int _data) {
+       float result;
+       result = 4.096 * _data / 4096;
+       return result;
+ }
+ /*
+   Расчет коэффициента усиления.
+   Максимальное входное напряжение 32В. Вход АЦП ограничен 4 вольтами (MCP3204).
+   Кус = Uвых/Uвх. Максимальный для данной схемы Кус = 4В/32В = 1/8.
+   Вход АЦП ограничен 4 вольтами => коэф усиления пропускаем через резистивный делитель на 2 (Кус = 1/2).
+   Получаем, что при Кус=8, на вход АЦП подается 4В, при Кус=4, на вход АЦП подается 2В и т.д.
+   Таким образом коэф. усиления расчитываем по след. формуле:
+         Кус = 2 * ADC_OUT_CH1/1000
+ */
+ float getGain(int _data) {
+       float k;
+       k = 2 * _data / 1000;
+       return k;
+ }
 
 void main() {
-     char buffer[10];
-     int adc_result;
-     char b;
-     initSPI();
-     rs232init();
+     char out_buffer[6]; // Результат АЦП - строка
+     char in_buffer[6]; // Вход АЦП - строка
+     char k_buffer[6]; // Коэффициент усиления
+     int adc_result; // Результат АЦП - число
+     float inputValue; // Вход АЦП - число
+     float k; // Коэффициент усиления - число
+
+     initSPI(); //Инициализация SPI
+     rs232init(); // Инициализация RS232
 
      CS = 1;
      Delay_us(1);
 
      while(1) {
+              /*
+                Получение 3 бита как результат работы АЦП
+              */
               *adc_data = adc_get_data(0);
+              /*
+                Получение полезных битов и их запись в одно число
+              */
               adc_result = parseADCValue(adc_data);
+              /*
+                Пересчет входного значения на основе выходного
+              */
+              inputValue = getInputValue(adc_result);
               
-              transmitString("channel 0 \0");
+              transmitStringln("channel 0\0");
 
-              itoa(adc_result, buffer);
-              transmitString(buffer);
+              itoa(adc_result, out_buffer); // Результат АЦП к строковому представлению
+              transmitString("ADC result: ");
+              transmitStringln(out_buffer);   //Передача в RS232
+              FloatToStr(inputValue, in_buffer);//Расчитанное входное значение к строковому представлению
+              transmitString("ADC input: ");
+              transmitStringln(in_buffer);        // Передача в RS232
               Delay_ms(1000);
               
               *adc_data = adc_get_data(1);
               adc_result = parseADCValue(adc_data);
+              inputValue = getInputValue(adc_result);
+              
+              transmitStringln("channel 1 \0");
 
-              transmitString("channel 1 \0");
-
-              itoa(adc_result, buffer);
-              transmitString(buffer);
+              itoa(adc_result, out_buffer);
+              transmitString("ADC result: ");
+              transmitStringln(out_buffer);
+              FloatToStr(inputValue, in_buffer);
+              transmitString("ADC input: ");
+              transmitStringln(in_buffer);
               Delay_ms(1000);
-
-              /*
-              transmitString("first byte");
-              itoa(adc_data->first, buffer);
-              transmit(buffer);
-              delay();
-              
-              transmitString("second byte");
-              itoa(adc_data->second, buffer);
-              transmit(buffer);
-              delay();
-
-              transmitString("third byte");
-              itoa(adc_data->third, buffer);
-              transmit(buffer);
-              delay();     */
-
-
-              //transmit(adc_data.first);
-              //transmit(adc_data.second);
-              //transmit(adc_data.third);
-              
-              //Delay_ms(5000);
-              
-//              adc_data = adc_get_data(1);
-//              transmitString(ch0);
-//              transmit(adc_data.first);
-//              transmit(adc_data.second);
-//              transmit(adc_data.third);
-//
-//              Delay_ms(2000);
      }
 }
