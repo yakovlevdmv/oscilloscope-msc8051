@@ -214,6 +214,9 @@ void transmitString(char* str) {
        while (*p) {
             transmit(*(p++));
        }
+       //New line CRLF
+       transmit('\r');
+       transmit('\n');
 }
 
 /*
@@ -249,12 +252,13 @@ struct rcv_data adc_get_data(int channel) {
          if(channel == 0) {
                     SPI_init_data += 0b00000000;
          } else if(channel == 1) {
-                    SPI_init_data += 0b00010000;
+                    SPI_init_data += 0b00001000;
          } else if(channel == 2) {
-                    SPI_init_data += 0b00100000;
+                    SPI_init_data += 0b00010000;
          } else if(channel == 3) {
-                    SPI_init_data += 0b00110000;
+                    SPI_init_data += 0b00011000;
          }
+         P0 = SPI_init_data;
          CS = 0; //Включение АЦП
          
          /*
@@ -280,6 +284,9 @@ struct rcv_data adc_get_data(int channel) {
          return _data;
 }
 
+/*
+  Получить n-ый бит из байта
+*/
 int getBit(int position, int byte) {
     return (byte >> position) & 1;
 }
@@ -290,7 +297,6 @@ int parseADCValue(struct rcv_data *adc_data) {
     //First byte
     result += getBit(0, adc_data->first);
     //Second byte
-
     for(i = 7; i >= 0; i--) {
           result <<= 1;
           result += getBit(i, adc_data->second);
@@ -358,11 +364,20 @@ void main() {
               *adc_data = adc_get_data(0);
               adc_result = parseADCValue(adc_data);
               
-              transmitString("channel 1 \0");
-              //Delay_ms(1000);
+              transmitString("channel 0 \0");
+
               itoa(adc_result, buffer);
               transmitString(buffer);
-              Delay_ms(1100);
+              Delay_ms(1000);
+              
+              *adc_data = adc_get_data(1);
+              adc_result = parseADCValue(adc_data);
+
+              transmitString("channel 1 \0");
+
+              itoa(adc_result, buffer);
+              transmitString(buffer);
+              Delay_ms(1000);
 
               /*
               transmitString("first byte");
