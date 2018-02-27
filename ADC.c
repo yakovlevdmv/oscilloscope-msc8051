@@ -277,74 +277,19 @@ void main() {
 
      while(1) {
               adc_data = adc_get_data(0);
-
+              transmit(0x00);
               transmit(adc_data.first);
               transmit(adc_data.second);
               transmit(adc_data.third);
 
               Delay_ms(2000);
-     }
-
-     /*char b;
-     initSPI();
-     rs232init();
-
-     CS = 1;
-     Delay_us(1);
-     
-     //LCD
-     displayOn();
-     mask2 = 0b11111111;
-
-     while(1) {
-
-              //LCCCDDDDDDDDDDD
               
-              drawPoint(0,1);
-              b = readData(0,1);
-              transmit(b);
+              adc_data = adc_get_data(1);
+              transmit(0x01);
+              transmit(adc_data.first);
+              transmit(adc_data.second);
+              transmit(adc_data.third);
               
-              drawPoint(0,3);
-              b = readData(0,3);
-              transmit(b);        */
-              //LCCCDDDDENNNND    */
-              /*
-              /*
-              * Вкючение АЦП
-              */
-//              CS = 0;
-
-              /*
-              * Читаем первый байт, 0bxxxxxx0b
-              */
-              //writeSPI(0b11000000);
-              /*
-              * Ожидаем окончания записи в SPI
-              */
-              //while(SPIF_bit != 1) {}
-              /*
-              * Считываем из SPI
-              */
-              //b = readSPI();
-              /*
-              * Отправляем полученные данные в RS232
-              */
-              //transmit(b);
-              /*
-              * Повторяем вышеописанные действия
-              */
-              /*
-              writeSPI(0b00000000);
-              while(SPIF_bit != 1) {}
-              b = readSPI();
-              transmit(b);
-              writeSPI(0b00000000);
-              while(SPIF_bit != 1) {}
-              b = readSPI();
-              transmit(b);
-
-              CS = 1;             */
-      /*        Delay_ms(10000);
+              Delay_ms(2000);
      }
-        */
 }

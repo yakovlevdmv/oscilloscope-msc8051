@@ -167,7 +167,7 @@ int readSPI() {
 void delay() {
  Delay_ms(500);
 }
-#line 232 "C:/Generator/ADC.c"
+#line 233 "C:/Generator/ADC.c"
 struct rcv_data adc_get_data(int channel) {
  struct rcv_data _data;
  int SPI_init_data = 0b11000000;
@@ -181,7 +181,7 @@ struct rcv_data adc_get_data(int channel) {
  SPI_init_data += 0b00110000;
  }
  CS = 0;
-#line 249 "C:/Generator/ADC.c"
+#line 250 "C:/Generator/ADC.c"
  writeSPI(SPI_init_data);
  while(SPIF_bit != 1) {}
  _data.first = readSPI();
@@ -212,12 +212,19 @@ void main() {
 
  while(1) {
  adc_data = adc_get_data(0);
+ transmit(0x00);
+ transmit(adc_data.first);
+ transmit(adc_data.second);
+ transmit(adc_data.third);
 
+ Delay_ms(2000);
+
+ adc_data = adc_get_data(1);
+ transmit(0x01);
  transmit(adc_data.first);
  transmit(adc_data.second);
  transmit(adc_data.third);
 
  Delay_ms(2000);
  }
-#line 349 "C:/Generator/ADC.c"
 }

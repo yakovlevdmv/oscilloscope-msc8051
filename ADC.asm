@@ -103,15 +103,15 @@ _readData:
 	MOV A, FARG_readData_y+1
 	MOV FARG_setXAddress_x+0, FARG_readData_y+0
 	INC R0
-	SJMP L__readData27
-L__readData28:
+	SJMP L__readData28
+L__readData29:
 	MOV C, #231
 	RRC A
 	XCH A, FARG_setXAddress_x+0
 	RRC A
 	XCH A, FARG_setXAddress_x+0
-L__readData27:
-	DJNZ R0, L__readData28
+L__readData28:
+	DJNZ R0, L__readData29
 	MOV FARG_setXAddress_x+1, A
 	LCALL _setXAddress+0
 ;ADC.c,88 :: 		setZAddress(0);
@@ -123,15 +123,15 @@ L__readData27:
 	MOV A, FARG_readData_x+1
 	MOV R1, FARG_readData_x+0
 	INC R0
-	SJMP L__readData29
-L__readData30:
+	SJMP L__readData30
+L__readData31:
 	MOV C, #231
 	RRC A
 	XCH A, R1
 	RRC A
 	XCH A, R1
-L__readData29:
-	DJNZ R0, L__readData30
+L__readData30:
+	DJNZ R0, L__readData31
 	MOV R2, A
 	MOV __cs+0, 1
 	MOV __cs+1, 2
@@ -214,15 +214,15 @@ _drawPoint:
 	MOV A, FARG_drawPoint_y+1
 	MOV FARG_setXAddress_x+0, FARG_drawPoint_y+0
 	INC R0
-	SJMP L__drawPoint31
-L__drawPoint32:
+	SJMP L__drawPoint32
+L__drawPoint33:
 	MOV C, #231
 	RRC A
 	XCH A, FARG_setXAddress_x+0
 	RRC A
 	XCH A, FARG_setXAddress_x+0
-L__drawPoint31:
-	DJNZ R0, L__drawPoint32
+L__drawPoint32:
+	DJNZ R0, L__drawPoint33
 	MOV FARG_setXAddress_x+1, A
 	LCALL _setXAddress+0
 ;ADC.c,130 :: 		_cs = x / 64;
@@ -230,15 +230,15 @@ L__drawPoint31:
 	MOV A, FARG_drawPoint_x+1
 	MOV R1, FARG_drawPoint_x+0
 	INC R0
-	SJMP L__drawPoint33
-L__drawPoint34:
+	SJMP L__drawPoint34
+L__drawPoint35:
 	MOV C, #231
 	RRC A
 	XCH A, R1
 	RRC A
 	XCH A, R1
-L__drawPoint33:
-	DJNZ R0, L__drawPoint34
+L__drawPoint34:
+	DJNZ R0, L__drawPoint35
 	MOV R2, A
 	MOV __cs+0, 1
 	MOV __cs+1, 2
@@ -317,15 +317,15 @@ L_drawPoint4:
 	MOV R0, #1
 	MOV A, _mask+0
 	INC R0
-	SJMP L__drawPoint35
-L__drawPoint36:
+	SJMP L__drawPoint36
+L__drawPoint37:
 	CLR C
 	RLC A
 	XCH A, _mask+1
 	RLC A
 	XCH A, _mask+1
-L__drawPoint35:
-	DJNZ R0, L__drawPoint36
+L__drawPoint36:
+	DJNZ R0, L__drawPoint37
 	MOV _mask+0, A
 ;ADC.c,143 :: 		for (count = 0; count < limit - 1; count++) {
 	MOV A, #1
@@ -352,15 +352,15 @@ L_drawPoint5:
 	MOV R0, #1
 	MOV A, _mask+0
 	INC R0
-	SJMP L__drawPoint37
-L__drawPoint38:
+	SJMP L__drawPoint38
+L__drawPoint39:
 	CLR C
 	RLC A
 	XCH A, _mask+1
 	RLC A
 	XCH A, _mask+1
-L__drawPoint37:
-	DJNZ R0, L__drawPoint38
+L__drawPoint38:
+	DJNZ R0, L__drawPoint39
 	MOV _mask+0, A
 ;ADC.c,148 :: 		}
 L_drawPoint7:
@@ -452,119 +452,119 @@ _delay:
 ; end of _delay
 
 _adc_get_data:
-;ADC.c,232 :: 		struct rcv_data adc_get_data(int channel) {
+;ADC.c,233 :: 		struct rcv_data adc_get_data(int channel) {
 	MOV _adc_get_data_su_addr+0, 3
-;ADC.c,234 :: 		int SPI_init_data = 0b11000000;
+;ADC.c,235 :: 		int SPI_init_data = 0b11000000;
 	MOV adc_get_data_SPI_init_data_L0+0, #192
 	MOV adc_get_data_SPI_init_data_L0+1, #0
-;ADC.c,235 :: 		if(channel == 0) {
+;ADC.c,236 :: 		if(channel == 0) {
 	MOV A, FARG_adc_get_data_channel+0
 	ORL A, FARG_adc_get_data_channel+1
 	JNZ L_adc_get_data10
-;ADC.c,236 :: 		SPI_init_data += 0b00000000;
-;ADC.c,237 :: 		} else if(channel == 1) {
+;ADC.c,237 :: 		SPI_init_data += 0b00000000;
+;ADC.c,238 :: 		} else if(channel == 1) {
 	SJMP L_adc_get_data11
 L_adc_get_data10:
 	MOV A, #1
 	XRL A, FARG_adc_get_data_channel+0
-	JNZ L__adc_get_data39
+	JNZ L__adc_get_data40
 	MOV A, #0
 	XRL A, FARG_adc_get_data_channel+1
-L__adc_get_data39:
+L__adc_get_data40:
 	JNZ L_adc_get_data12
-;ADC.c,238 :: 		SPI_init_data += 0b00010000;
+;ADC.c,239 :: 		SPI_init_data += 0b00010000;
 	MOV A, #16
 	ADD A, adc_get_data_SPI_init_data_L0+0
 	MOV adc_get_data_SPI_init_data_L0+0, A
 	MOV A, #0
 	ADDC A, adc_get_data_SPI_init_data_L0+1
 	MOV adc_get_data_SPI_init_data_L0+1, A
-;ADC.c,239 :: 		} else if(channel == 2) {
+;ADC.c,240 :: 		} else if(channel == 2) {
 	SJMP L_adc_get_data13
 L_adc_get_data12:
 	MOV A, #2
 	XRL A, FARG_adc_get_data_channel+0
-	JNZ L__adc_get_data40
+	JNZ L__adc_get_data41
 	MOV A, #0
 	XRL A, FARG_adc_get_data_channel+1
-L__adc_get_data40:
+L__adc_get_data41:
 	JNZ L_adc_get_data14
-;ADC.c,240 :: 		SPI_init_data += 0b00100000;
+;ADC.c,241 :: 		SPI_init_data += 0b00100000;
 	MOV A, #32
 	ADD A, adc_get_data_SPI_init_data_L0+0
 	MOV adc_get_data_SPI_init_data_L0+0, A
 	MOV A, #0
 	ADDC A, adc_get_data_SPI_init_data_L0+1
 	MOV adc_get_data_SPI_init_data_L0+1, A
-;ADC.c,241 :: 		} else if(channel == 3) {
+;ADC.c,242 :: 		} else if(channel == 3) {
 	SJMP L_adc_get_data15
 L_adc_get_data14:
 	MOV A, #3
 	XRL A, FARG_adc_get_data_channel+0
-	JNZ L__adc_get_data41
+	JNZ L__adc_get_data42
 	MOV A, #0
 	XRL A, FARG_adc_get_data_channel+1
-L__adc_get_data41:
+L__adc_get_data42:
 	JNZ L_adc_get_data16
-;ADC.c,242 :: 		SPI_init_data += 0b00110000;
+;ADC.c,243 :: 		SPI_init_data += 0b00110000;
 	MOV A, #48
 	ADD A, adc_get_data_SPI_init_data_L0+0
 	MOV adc_get_data_SPI_init_data_L0+0, A
 	MOV A, #0
 	ADDC A, adc_get_data_SPI_init_data_L0+1
 	MOV adc_get_data_SPI_init_data_L0+1, A
-;ADC.c,243 :: 		}
+;ADC.c,244 :: 		}
 L_adc_get_data16:
 L_adc_get_data15:
 L_adc_get_data13:
 L_adc_get_data11:
-;ADC.c,244 :: 		CS = 0; //Включение АЦП
+;ADC.c,245 :: 		CS = 0; //Включение АЦП
 	CLR P2_0_bit+0
-;ADC.c,249 :: 		writeSPI(SPI_init_data);       //Отправка данных для установки режима АЦП
+;ADC.c,250 :: 		writeSPI(SPI_init_data);       //Отправка данных для установки режима АЦП
 	MOV FARG_writeSPI__data+0, adc_get_data_SPI_init_data_L0+0
 	MOV FARG_writeSPI__data+1, adc_get_data_SPI_init_data_L0+1
 	LCALL _writeSPI+0
-;ADC.c,250 :: 		while(SPIF_bit != 1) {}     //Ждем конца отправки
+;ADC.c,251 :: 		while(SPIF_bit != 1) {}     //Ждем конца отправки
 L_adc_get_data17:
 	MOV A, SPIF_bit+0
 	JB 224, L_adc_get_data18
 	NOP
 	SJMP L_adc_get_data17
 L_adc_get_data18:
-;ADC.c,251 :: 		_data.first = readSPI(); //Читаем результат
+;ADC.c,252 :: 		_data.first = readSPI(); //Читаем результат
 	LCALL _readSPI+0
 	MOV adc_get_data__data_L0+0, 0
-;ADC.c,254 :: 		writeSPI(0b00000000); //Отправка данных
+;ADC.c,255 :: 		writeSPI(0b00000000); //Отправка данных
 	MOV FARG_writeSPI__data+0, #0
 	MOV FARG_writeSPI__data+1, #0
 	LCALL _writeSPI+0
-;ADC.c,255 :: 		while(SPIF_bit != 1) {} //Ждем конца отправки
+;ADC.c,256 :: 		while(SPIF_bit != 1) {} //Ждем конца отправки
 L_adc_get_data19:
 	MOV A, SPIF_bit+0
 	JB 224, L_adc_get_data20
 	NOP
 	SJMP L_adc_get_data19
 L_adc_get_data20:
-;ADC.c,256 :: 		_data.second = readSPI();
+;ADC.c,257 :: 		_data.second = readSPI();
 	LCALL _readSPI+0
 	MOV adc_get_data__data_L0+1, 0
-;ADC.c,259 :: 		writeSPI(0b00000000);
+;ADC.c,260 :: 		writeSPI(0b00000000);
 	MOV FARG_writeSPI__data+0, #0
 	MOV FARG_writeSPI__data+1, #0
 	LCALL _writeSPI+0
-;ADC.c,260 :: 		while(SPIF_bit != 1) {}
+;ADC.c,261 :: 		while(SPIF_bit != 1) {}
 L_adc_get_data21:
 	MOV A, SPIF_bit+0
 	JB 224, L_adc_get_data22
 	NOP
 	SJMP L_adc_get_data21
 L_adc_get_data22:
-;ADC.c,261 :: 		_data.third = readSPI();
+;ADC.c,262 :: 		_data.third = readSPI();
 	LCALL _readSPI+0
 	MOV adc_get_data__data_L0+2, 0
-;ADC.c,264 :: 		CS = 1;
+;ADC.c,265 :: 		CS = 1;
 	SETB P2_0_bit+0
-;ADC.c,266 :: 		return _data;
+;ADC.c,267 :: 		return _data;
 	MOV R3, #3
 	MOV R0, _adc_get_data_su_addr+0
 	MOV R1, #adc_get_data__data_L0+0
@@ -585,24 +585,24 @@ L_adc_get_data23:
 	JNZ L_adc_get_data23
 	MOV CS+0, adc_get_data__data_L0+0
 	MOV CS+1, adc_get_data__data_L0+1
-;ADC.c,267 :: 		}
+;ADC.c,268 :: 		}
 	RET
 ; end of _adc_get_data
 
 _main:
 	MOV SP+0, #128
-;ADC.c,269 :: 		void main() {
-;ADC.c,271 :: 		initSPI();
+;ADC.c,270 :: 		void main() {
+;ADC.c,272 :: 		initSPI();
 	LCALL _initSPI+0
-;ADC.c,272 :: 		rs232init();
+;ADC.c,273 :: 		rs232init();
 	LCALL _rs232init+0
-;ADC.c,274 :: 		CS = 1;
+;ADC.c,275 :: 		CS = 1;
 	SETB P2_0_bit+0
-;ADC.c,275 :: 		Delay_us(1);
+;ADC.c,276 :: 		Delay_us(1);
 	NOP
-;ADC.c,277 :: 		while(1) {
+;ADC.c,278 :: 		while(1) {
 L_main24:
-;ADC.c,278 :: 		adc_data = adc_get_data(0);
+;ADC.c,279 :: 		adc_data = adc_get_data(0);
 	MOV FARG_adc_get_data_channel+0, #0
 	MOV FARG_adc_get_data_channel+1, #0
 	MOV R3, #FLOC__main+0
@@ -627,24 +627,71 @@ L_main26:
 	JNZ L_main26
 	MOV _adc_data+0, FLOC__main+0
 	MOV _adc_data+1, FLOC__main+1
-;ADC.c,280 :: 		transmit(adc_data.first);
+;ADC.c,280 :: 		transmit(0x00);
+	MOV FARG_transmit_b+0, #0
+	LCALL _transmit+0
+;ADC.c,281 :: 		transmit(adc_data.first);
 	MOV FARG_transmit_b+0, _adc_data+0
 	LCALL _transmit+0
-;ADC.c,281 :: 		transmit(adc_data.second);
+;ADC.c,282 :: 		transmit(adc_data.second);
 	MOV FARG_transmit_b+0, _adc_data+1
 	LCALL _transmit+0
-;ADC.c,282 :: 		transmit(adc_data.third);
+;ADC.c,283 :: 		transmit(adc_data.third);
 	MOV FARG_transmit_b+0, _adc_data+2
 	LCALL _transmit+0
-;ADC.c,284 :: 		Delay_ms(2000);
+;ADC.c,285 :: 		Delay_ms(2000);
 	MOV R5, 13
 	MOV R6, 171
 	MOV R7, 124
 	DJNZ R7, 
 	DJNZ R6, 
 	DJNZ R5, 
-;ADC.c,285 :: 		}
-	SJMP L_main24
-;ADC.c,349 :: 		}
+;ADC.c,287 :: 		adc_data = adc_get_data(1);
+	MOV FARG_adc_get_data_channel+0, #1
+	MOV FARG_adc_get_data_channel+1, #0
+	MOV R3, #FLOC__main+0
+	LCALL _adc_get_data+0
+	MOV R3, #3
+	MOV R0, #_adc_data+0
+	MOV R1, #FLOC__main+0
+L_main27:
+	MOV A, @R1
+	MOV @R0, A
+	MOV R2, #1
+	CLR C
+	MOV A, R3
+	SUBB A, R2
+	MOV R3, A
+	CLR A
+	SUBB A, R3
+	MOV R4, A
+	INC R0
+	INC R1
+	MOV A, R3
+	JNZ L_main27
+	MOV _adc_data+0, FLOC__main+0
+	MOV _adc_data+1, FLOC__main+1
+;ADC.c,288 :: 		transmit(0x01);
+	MOV FARG_transmit_b+0, #1
+	LCALL _transmit+0
+;ADC.c,289 :: 		transmit(adc_data.first);
+	MOV FARG_transmit_b+0, _adc_data+0
+	LCALL _transmit+0
+;ADC.c,290 :: 		transmit(adc_data.second);
+	MOV FARG_transmit_b+0, _adc_data+1
+	LCALL _transmit+0
+;ADC.c,291 :: 		transmit(adc_data.third);
+	MOV FARG_transmit_b+0, _adc_data+2
+	LCALL _transmit+0
+;ADC.c,293 :: 		Delay_ms(2000);
+	MOV R5, 13
+	MOV R6, 171
+	MOV R7, 124
+	DJNZ R7, 
+	DJNZ R6, 
+	DJNZ R5, 
+;ADC.c,294 :: 		}
+	LJMP L_main24
+;ADC.c,295 :: 		}
 	SJMP #254
 ; end of _main
