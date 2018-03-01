@@ -361,7 +361,7 @@ const char *ch1 = "channel 1";
 const char *RESULT_STR = "ADC result: ";
 const char *INPUT_STR = "ADC input: ";
 const char *GAIN_STR = "Gain: ";
->
+
 
 void main() {
      char textBuffer[15];
