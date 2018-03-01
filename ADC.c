@@ -21,8 +21,6 @@ sbit LCD_D5 at P0_5_bit;
 sbit LCD_D6 at P0_6_bit;
 sbit LCD_D7 at P0_7_bit;
 
-int mask1, mask2, mask, count, limit, _cs, buf;
-
 /*
    Установка адреса X GLCD экрана
 */
@@ -83,13 +81,14 @@ void writeData(char _data) {
    PS.: Не работает
 */
 int readData(int x, int y) {
+    int buf = 0;
+    int _cs = x / 64;
     LCD_EN = 0;
     LCD_RS = 1;
     LCD_RW = 1;
-    
+
     setXAddress(y/8);
     setZAddress(0);
-    _cs = x / 64;
 
      if (_cs == 0 ) {
         LCD_CS1B = 0;
@@ -100,7 +99,7 @@ int readData(int x, int y) {
         LCD_CS2B = 0;
         setYAddress(64 + (x % 64));
      }
-    
+
     LCD_EN = 1;
     buf = P0;
     LCD_EN = 0;
@@ -128,9 +127,11 @@ void displayOn() {
   y - ордината, 0 - 64
 */
 void drawPoint(int x, int y) {
-     mask = 0b00000001;
+     int count = 0;
+     int limit = 0;
+     int mask = 0b00000001;
+     int _cs = x / 64;
      setXAddress(y/8);
-     _cs = x / 64;
 
      if (_cs == 0 ) {
         LCD_CS1B = 0;
@@ -207,12 +208,20 @@ void transmit(char b) {
 }
 
 void transmitString(char* str) {
-       char ch = str[0];
        char *p = &str[0];
 
        while (*p) {
             transmit(*(p++));
        }
+}
+
+void transmitStringln(char* str) {
+       char *p = &str[0];
+
+       while (*p) {
+            transmit(*(p++));
+       }
+       
        //New line CRLF
        transmit('\r');
        transmit('\n');
@@ -257,8 +266,9 @@ struct rcv_data adc_get_data(int channel) {
          } else if(channel == 3) {
                     SPI_init_data += 0b00011000;
          }
-         P0 = SPI_init_data;//Вывод режима работы АЦП на порт 0
-         
+         P0 = SPI_init_data;
+         CS = 0; //Включение АЦП
+
          /*
            Отправка данных через SPI для установки режима и запуска АЦП
          */
@@ -309,71 +319,138 @@ int parseADCValue(struct rcv_data *adc_data) {
 }
 
  /*
-     Следующие 2 функциии реализуют преобразования int в строку
-     Источник https://ru.wikipedia.org/wiki/Itoa_(Си)
+   Расчет входного значения АЦП на основе его выходных данных
  */
-
- /* reverse:  переворачивает строку s на месте */
- void reverse(char s[])
- {
-     int i, j;
-     char c;
-
-     for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
-         c = s[i];
-         s[i] = s[j];
-         s[j] = c;
-     }
+ float getInputValue(int _data) {
+       return 4.096 * _data / 4096;
  }
-
- /* itoa:  конвертируем n в символы в s */
- void itoa(int n, char s[])
- {
-     int i, sign;
-
-     if ((sign = n) < 0)  /* записываем знак */
-         n = -n;          /* делаем n положительным числом */
-     i = 0;
-     do {       /* генерируем цифры в обратном порядке */
-         s[i++] = n % 10 + '0';   /* берем следующую цифру */
-     } while ((n /= 10) > 0);     /* удаляем */
-     if (sign < 0)
-         s[i++] = '-';
-     s[i] = '\0';
-     reverse(s);
+ /*
+   Расчет коэффициента усиления.
+   Максимальное входное напряжение 32В. Вход АЦП ограничен 4 вольтами (MCP3204).
+   Кус = Uвых/Uвх. Максимальный для данной схемы Кус = 4В/32В = 1/8.
+   Вход АЦП ограничен 4 вольтами => коэф усиления пропускаем через резистивный делитель на 2 (Кус = 1/2).
+   Получаем, что при Кус=8, на вход АЦП подается 4В, при Кус=4, на вход АЦП подается 2В и т.д.
+   Таким образом коэф. усиления расчитываем по след. формуле:
+         Кус = 2 * ADC_OUT_CH1/1000
+ */
+ float getGain(int _data) {
+       return 2 * _data / 1000;
  }
  
- float getInputValue(int adc_result) {
-       return adc_result * VREF / 4096;
- }
+/*
+  Most of the Microcontrolleres having limited RAM, For Avoiding the Errors Not Enough RAM and Strings problem (const truncated) .
+  You have to move the strings to ROM (FLASH program) memory, and there by save RAM.
+
+  In MikroC
+  if the string is declared as constant - compiler will move it to ROM
+  This is the way in which const truncated problem can be solved if
+  great number of strings was used that was located in RAM.
+  
+  Source: http://www.shibuvarkala.com/2009/02/how-to-use-rom-for-storing-data-in.html
+*/
+// Copying strings from ROM to RAM
+void strConstCpy(char *dest, const char *source) {
+  while(*source)
+  *dest++ = *source++ ;
+
+  *dest = 0 ;
+}
+
+const char *ch0 = "channel 0";
+const char *ch1 = "channel 1";
+const char *RESULT_STR = "ADC result: ";
+const char *INPUT_STR = "ADC input: ";
+const char *GAIN_STR = "Gain: ";
+>
 
 void main() {
-     char buffer[10];
-     int adc_result;
-     char b;
-     initSPI();
-     rs232init();
+     char textBuffer[15];
+     //char out_buffer[6]; // Результат АЦП - строка
+     //char in_buffer[6]; // Вход АЦП - строка
+     //char k_buffer[6]; // Коэффициент усиления
+     int adc_result; // Результат АЦП - число
+     float inputValue; // Вход АЦП - число
+     float k; // Коэффициент усиления - число
+     
+     //float numBuffer;
+
+     initSPI(); //Инициализация SPI
+     rs232init(); // Инициализация RS232
 
      CS = 1;
      Delay_us(1);
 
      while(1) {
+              /*
+                Получение 3 бит, как результат работы АЦП
+              */
               *adc_data = adc_get_data(0);
+              /*
+                Запись бит, несущих полезную информацию в одно число
+              */
               adc_result = parseADCValue(adc_data);
               
-              transmitString("channel 0 \0");
-
-              itoa(adc_result, buffer);
-              transmitString(buffer);
-              Delay_ms(1000);
+              inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
               
+              /*
+                Вывод в COM номер канала, полученное значение АЦП, рассчитанное входное значение
+              */
+              strConstCpy(textBuffer, ch0);           //"channel 0"
+              transmitStringln(textBuffer);           //Отправка строки в RS232
+
+              strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
+              transmitString(textBuffer);
+              
+              IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
+              transmitString(textBuffer);             //Передача в RS232
+              
+              strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
+              transmitString(textBuffer);
+              
+              FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
+              transmitStringln(textBuffer);
+
+              Delay_ms(1000);                         //Задержка в 1 секунду
+              
+              /*
+                Получение 3 бита как результат работы АЦП
+              */
               *adc_data = adc_get_data(1);
+              /*
+                Получение полезных битов и их запись в одно число
+              */
               adc_result = parseADCValue(adc_data);
 
-              transmitString("channel 1 \0");
+              /*
+                Пересчет входного значения на основе выходного
+              */
+              inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
+              k = getGain(adc_result);                //Расчет коэффициента усиления
+              
+              /*
+                Вывод в COM номер канала, полученное значение АЦП, рассчитанное входное значение, рассчитанный коэффициент усиления
+              */
+              strConstCpy(textBuffer, ch1);           //"channel 1"
+              transmitStringln(textBuffer);           //Отправка строки в RS232
+              
+              strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
+              transmitString(textBuffer);
 
-              itoa(adc_result, buffer);
-              transmitString(buffer);
-              Delay_ms(1000);
+              IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
+              transmitString(textBuffer);
+              
+              strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
+              transmitString(textBuffer);
+              
+              FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
+              transmitStringln(textBuffer);
+              
+              strConstCpy(textBuffer, GAIN_STR);     //"Gain: "
+              transmitString(textBuffer);
+              
+              FloatToStr(k, textBuffer);             //Расчитанный коэффициент усиления к строковому представлению
+              transmitStringln(textBuffer);
+              
+              Delay_ms(1000);                       //Задержка 1 сек.
      }
 }
