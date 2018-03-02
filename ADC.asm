@@ -838,25 +838,20 @@ _getInputValue:
 
 _getGain:
 ;ADC.c,336 :: 		float getGain(int _data) {
-;ADC.c,337 :: 		return 2 * _data / 1000;
-	MOV R2, #1
+;ADC.c,337 :: 		return 2. * (_data / 1000.);
+	MOV R0, FARG_getGain__data+0
 	MOV R1, FARG_getGain__data+1
-	MOV A, FARG_getGain__data+0
-	INC R2
-	SJMP L__getGain61
-L__getGain62:
-	CLR C
-	RLC A
-	XCH A, R1
-	RLC A
-	XCH A, R1
-L__getGain61:
-	DJNZ R2, L__getGain62
-	MOV R0, A
-	MOV R4, #232
-	MOV R5, #3
-	LCALL _Div_16x16_S+0
 	LCALL _Int2Double+0
+	MOV R4, #0
+	MOV R5, #0
+	MOV R6, #122
+	MOV 7, #68
+	LCALL _Div_32x32_FP+0
+	MOV R4, #0
+	MOV R5, #0
+	MOV R6, #0
+	MOV 7, #64
+	LCALL _Mul_32x32_FP+0
 ;ADC.c,338 :: 		}
 	RET
 ; end of _getGain
@@ -897,18 +892,18 @@ L_strConstCpy35:
 
 _main:
 	MOV SP+0, #128
-;ADC.c,366 :: 		void main() {
-;ADC.c,377 :: 		initSPI(); //Инициализация SPI
+;ADC.c,367 :: 		void main() {
+;ADC.c,378 :: 		initSPI(); //Инициализация SPI
 	LCALL _initSPI+0
-;ADC.c,378 :: 		rs232init(); // Инициализация RS232
+;ADC.c,379 :: 		rs232init(); // Инициализация RS232
 	LCALL _rs232init+0
-;ADC.c,380 :: 		CS = 1;
+;ADC.c,381 :: 		CS = 1;
 	SETB P2_0_bit+0
-;ADC.c,381 :: 		Delay_us(1);
+;ADC.c,382 :: 		Delay_us(1);
 	NOP
-;ADC.c,383 :: 		while(1) {
+;ADC.c,384 :: 		while(1) {
 L_main36:
-;ADC.c,387 :: 		*adc_data = adc_get_data(0);
+;ADC.c,388 :: 		*adc_data = adc_get_data(0);
 	MOV FARG_adc_get_data_channel+0, #0
 	MOV FARG_adc_get_data_channel+1, #0
 	MOV R3, #FLOC__main+0
@@ -935,12 +930,12 @@ L_main38:
 	MOV @R0, FLOC__main+0
 	INC R0
 	MOV @R0, FLOC__main+1
-;ADC.c,391 :: 		adc_result = parseADCValue(adc_data);
+;ADC.c,392 :: 		adc_result = parseADCValue(adc_data);
 	MOV FARG_parseADCValue_adc_data+0, _adc_data+0
 	LCALL _parseADCValue+0
 	MOV main_adc_result_L0+0, 0
 	MOV main_adc_result_L0+1, 1
-;ADC.c,393 :: 		inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
+;ADC.c,394 :: 		inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
 	MOV FARG_getInputValue__data+0, 0
 	MOV FARG_getInputValue__data+1, 1
 	LCALL _getInputValue+0
@@ -948,56 +943,72 @@ L_main38:
 	MOV main_inputValue_L0+1, 1
 	MOV main_inputValue_L0+2, 2
 	MOV main_inputValue_L0+3, 3
-;ADC.c,398 :: 		strConstCpy(textBuffer, ch0);           //"channel 0"
+;ADC.c,399 :: 		strConstCpy(textBuffer, ch0);         //"channel 0"
 	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
 	MOV FARG_strConstCpy_source+0, _ch0+0
 	MOV FARG_strConstCpy_source+1, _ch0+1
 	LCALL _strConstCpy+0
-;ADC.c,399 :: 		transmitStringln(textBuffer);           //Отправка строки в RS232
-	MOV FARG_transmitStringln_str+0, #main_textBuffer_L0+0
-	LCALL _transmitStringln+0
-;ADC.c,401 :: 		strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
+;ADC.c,400 :: 		transmitString(textBuffer);           //Отправка строки в RS232
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,405 :: 		strConstCpy(textBuffer, CRLF);        //"\r\n"
+	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
+	MOV FARG_strConstCpy_source+0, _CRLF+0
+	MOV FARG_strConstCpy_source+1, _CRLF+1
+	LCALL _strConstCpy+0
+;ADC.c,406 :: 		transmitString(textBuffer);           //Отправка строки в RS232
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,411 :: 		strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
 	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
 	MOV FARG_strConstCpy_source+0, _RESULT_STR+0
 	MOV FARG_strConstCpy_source+1, _RESULT_STR+1
 	LCALL _strConstCpy+0
-;ADC.c,402 :: 		transmitString(textBuffer);
+;ADC.c,412 :: 		transmitString(textBuffer);
 	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
 	LCALL _transmitString+0
-;ADC.c,404 :: 		IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
+;ADC.c,414 :: 		IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
 	MOV FARG_IntToStr_input+0, main_adc_result_L0+0
 	MOV FARG_IntToStr_input+1, main_adc_result_L0+1
 	MOV FARG_IntToStr_output+0, #main_textBuffer_L0+0
 	LCALL _IntToStr+0
-;ADC.c,405 :: 		transmitString(textBuffer);             //Передача в RS232
+;ADC.c,415 :: 		transmitString(textBuffer);             //Передача в RS232
 	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
 	LCALL _transmitString+0
-;ADC.c,407 :: 		strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
+;ADC.c,420 :: 		strConstCpy(textBuffer, CRLF);        //"\r\n"
+	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
+	MOV FARG_strConstCpy_source+0, _CRLF+0
+	MOV FARG_strConstCpy_source+1, _CRLF+1
+	LCALL _strConstCpy+0
+;ADC.c,421 :: 		transmitString(textBuffer);           //Отправка строки в RS232
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,426 :: 		strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
 	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
 	MOV FARG_strConstCpy_source+0, _INPUT_STR+0
 	MOV FARG_strConstCpy_source+1, _INPUT_STR+1
 	LCALL _strConstCpy+0
-;ADC.c,408 :: 		transmitString(textBuffer);
+;ADC.c,427 :: 		transmitString(textBuffer);
 	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
 	LCALL _transmitString+0
-;ADC.c,410 :: 		FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
+;ADC.c,429 :: 		FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
 	MOV FARG_FloatToStr_fnum+0, main_inputValue_L0+0
 	MOV FARG_FloatToStr_fnum+1, main_inputValue_L0+1
 	MOV FARG_FloatToStr_fnum+2, main_inputValue_L0+2
 	MOV FARG_FloatToStr_fnum+3, main_inputValue_L0+3
 	MOV FARG_FloatToStr_str+0, #main_textBuffer_L0+0
 	LCALL _FloatToStr+0
-;ADC.c,411 :: 		transmitStringln(textBuffer);
+;ADC.c,430 :: 		transmitStringln(textBuffer);
 	MOV FARG_transmitStringln_str+0, #main_textBuffer_L0+0
 	LCALL _transmitStringln+0
-;ADC.c,413 :: 		Delay_ms(1000);                         //Задержка в 1 секунду
+;ADC.c,432 :: 		Delay_ms(1000);                         //Задержка в 1 секунду
 	MOV R5, 7
 	MOV R6, 86
 	MOV R7, 60
 	DJNZ R7, 
 	DJNZ R6, 
 	DJNZ R5, 
-;ADC.c,418 :: 		*adc_data = adc_get_data(1);
+;ADC.c,437 :: 		*adc_data = adc_get_data(1);
 	MOV FARG_adc_get_data_channel+0, #1
 	MOV FARG_adc_get_data_channel+1, #0
 	MOV R3, #FLOC__main+0
@@ -1024,12 +1035,12 @@ L_main39:
 	MOV @R0, FLOC__main+0
 	INC R0
 	MOV @R0, FLOC__main+1
-;ADC.c,422 :: 		adc_result = parseADCValue(adc_data);
+;ADC.c,441 :: 		adc_result = parseADCValue(adc_data);
 	MOV FARG_parseADCValue_adc_data+0, _adc_data+0
 	LCALL _parseADCValue+0
 	MOV main_adc_result_L0+0, 0
 	MOV main_adc_result_L0+1, 1
-;ADC.c,427 :: 		inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
+;ADC.c,446 :: 		inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
 	MOV FARG_getInputValue__data+0, 0
 	MOV FARG_getInputValue__data+1, 1
 	LCALL _getInputValue+0
@@ -1037,7 +1048,7 @@ L_main39:
 	MOV main_inputValue_L0+1, 1
 	MOV main_inputValue_L0+2, 2
 	MOV main_inputValue_L0+3, 3
-;ADC.c,428 :: 		k = getGain(adc_result);                //Расчет коэффициента усиления
+;ADC.c,447 :: 		k = getGain(adc_result);                //Расчет коэффициента усиления
 	MOV FARG_getGain__data+0, main_adc_result_L0+0
 	MOV FARG_getGain__data+1, main_adc_result_L0+1
 	LCALL _getGain+0
@@ -1045,75 +1056,110 @@ L_main39:
 	MOV main_k_L0+1, 1
 	MOV main_k_L0+2, 2
 	MOV main_k_L0+3, 3
-;ADC.c,433 :: 		strConstCpy(textBuffer, ch1);           //"channel 1"
+;ADC.c,456 :: 		strConstCpy(textBuffer, CRLF);        //"\r\n"
+	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
+	MOV FARG_strConstCpy_source+0, _CRLF+0
+	MOV FARG_strConstCpy_source+1, _CRLF+1
+	LCALL _strConstCpy+0
+;ADC.c,457 :: 		transmitString(textBuffer);           //Отправка строки в RS232
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,461 :: 		strConstCpy(textBuffer, ch1);           //"channel 1"
 	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
 	MOV FARG_strConstCpy_source+0, _ch1+0
 	MOV FARG_strConstCpy_source+1, _ch1+1
 	LCALL _strConstCpy+0
-;ADC.c,434 :: 		transmitStringln(textBuffer);           //Отправка строки в RS232
+;ADC.c,462 :: 		transmitStringln(textBuffer);           //Отправка строки в RS232
 	MOV FARG_transmitStringln_str+0, #main_textBuffer_L0+0
 	LCALL _transmitStringln+0
-;ADC.c,436 :: 		strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
+;ADC.c,464 :: 		strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
 	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
 	MOV FARG_strConstCpy_source+0, _RESULT_STR+0
 	MOV FARG_strConstCpy_source+1, _RESULT_STR+1
 	LCALL _strConstCpy+0
-;ADC.c,437 :: 		transmitString(textBuffer);
+;ADC.c,465 :: 		transmitString(textBuffer);
 	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
 	LCALL _transmitString+0
-;ADC.c,439 :: 		IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
+;ADC.c,467 :: 		IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
 	MOV FARG_IntToStr_input+0, main_adc_result_L0+0
 	MOV FARG_IntToStr_input+1, main_adc_result_L0+1
 	MOV FARG_IntToStr_output+0, #main_textBuffer_L0+0
 	LCALL _IntToStr+0
-;ADC.c,440 :: 		transmitString(textBuffer);
+;ADC.c,468 :: 		transmitString(textBuffer);
 	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
 	LCALL _transmitString+0
-;ADC.c,442 :: 		strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
+;ADC.c,473 :: 		strConstCpy(textBuffer, CRLF);        //"\r\n"
+	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
+	MOV FARG_strConstCpy_source+0, _CRLF+0
+	MOV FARG_strConstCpy_source+1, _CRLF+1
+	LCALL _strConstCpy+0
+;ADC.c,474 :: 		transmitString(textBuffer);           //Отправка строки в RS232
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,479 :: 		strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
 	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
 	MOV FARG_strConstCpy_source+0, _INPUT_STR+0
 	MOV FARG_strConstCpy_source+1, _INPUT_STR+1
 	LCALL _strConstCpy+0
-;ADC.c,443 :: 		transmitString(textBuffer);
+;ADC.c,480 :: 		transmitString(textBuffer);
 	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
 	LCALL _transmitString+0
-;ADC.c,445 :: 		FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
+;ADC.c,482 :: 		FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
 	MOV FARG_FloatToStr_fnum+0, main_inputValue_L0+0
 	MOV FARG_FloatToStr_fnum+1, main_inputValue_L0+1
 	MOV FARG_FloatToStr_fnum+2, main_inputValue_L0+2
 	MOV FARG_FloatToStr_fnum+3, main_inputValue_L0+3
 	MOV FARG_FloatToStr_str+0, #main_textBuffer_L0+0
 	LCALL _FloatToStr+0
-;ADC.c,446 :: 		transmitStringln(textBuffer);
-	MOV FARG_transmitStringln_str+0, #main_textBuffer_L0+0
-	LCALL _transmitStringln+0
-;ADC.c,448 :: 		strConstCpy(textBuffer, GAIN_STR);     //"Gain: "
+;ADC.c,483 :: 		transmitString(textBuffer);
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,488 :: 		strConstCpy(textBuffer, CRLF);        //"\r\n"
+	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
+	MOV FARG_strConstCpy_source+0, _CRLF+0
+	MOV FARG_strConstCpy_source+1, _CRLF+1
+	LCALL _strConstCpy+0
+;ADC.c,489 :: 		transmitString(textBuffer);           //Отправка строки в RS232
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,494 :: 		strConstCpy(textBuffer, GAIN_STR);     //"Gain: "
 	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
 	MOV FARG_strConstCpy_source+0, _GAIN_STR+0
 	MOV FARG_strConstCpy_source+1, _GAIN_STR+1
 	LCALL _strConstCpy+0
-;ADC.c,449 :: 		transmitString(textBuffer);
+;ADC.c,495 :: 		transmitString(textBuffer);
 	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
 	LCALL _transmitString+0
-;ADC.c,451 :: 		FloatToStr(k, textBuffer);             //Расчитанный коэффициент усиления к строковому представлению
+;ADC.c,497 :: 		FloatToStr(k, textBuffer);             //Расчитанный коэффициент усиления к строковому представлению
 	MOV FARG_FloatToStr_fnum+0, main_k_L0+0
 	MOV FARG_FloatToStr_fnum+1, main_k_L0+1
 	MOV FARG_FloatToStr_fnum+2, main_k_L0+2
 	MOV FARG_FloatToStr_fnum+3, main_k_L0+3
 	MOV FARG_FloatToStr_str+0, #main_textBuffer_L0+0
 	LCALL _FloatToStr+0
-;ADC.c,452 :: 		transmitStringln(textBuffer);
-	MOV FARG_transmitStringln_str+0, #main_textBuffer_L0+0
-	LCALL _transmitStringln+0
-;ADC.c,454 :: 		Delay_ms(1000);                       //Задержка 1 сек.
+;ADC.c,498 :: 		transmitString(textBuffer);
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,503 :: 		strConstCpy(textBuffer, CRLF);        //"\r\n"
+	MOV FARG_strConstCpy_dest+0, #main_textBuffer_L0+0
+	MOV FARG_strConstCpy_source+0, _CRLF+0
+	MOV FARG_strConstCpy_source+1, _CRLF+1
+	LCALL _strConstCpy+0
+;ADC.c,504 :: 		transmitString(textBuffer);           //Отправка строки в RS232
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,505 :: 		transmitString(textBuffer);
+	MOV FARG_transmitString_str+0, #main_textBuffer_L0+0
+	LCALL _transmitString+0
+;ADC.c,510 :: 		Delay_ms(1000);                       //Задержка 1 сек.
 	MOV R5, 7
 	MOV R6, 86
 	MOV R7, 60
 	DJNZ R7, 
 	DJNZ R6, 
 	DJNZ R5, 
-;ADC.c,455 :: 		}
+;ADC.c,511 :: 		}
 	LJMP L_main36
-;ADC.c,456 :: 		}
+;ADC.c,512 :: 		}
 	SJMP #254
 ; end of _main

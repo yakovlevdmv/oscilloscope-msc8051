@@ -334,7 +334,7 @@ int parseADCValue(struct rcv_data *adc_data) {
          Кус = 2 * ADC_OUT_CH1/1000
  */
  float getGain(int _data) {
-       return 2 * _data / 1000;
+       return 2. * (_data / 1000.);
  }
  
 /*
@@ -345,7 +345,7 @@ int parseADCValue(struct rcv_data *adc_data) {
   if the string is declared as constant - compiler will move it to ROM
   This is the way in which const truncated problem can be solved if
   great number of strings was used that was located in RAM.
-  
+
   Source: http://www.shibuvarkala.com/2009/02/how-to-use-rom-for-storing-data-in.html
 */
 // Copying strings from ROM to RAM
@@ -361,6 +361,7 @@ const char *ch1 = "channel 1";
 const char *RESULT_STR = "ADC result: ";
 const char *INPUT_STR = "ADC input: ";
 const char *GAIN_STR = "Gain: ";
+const char *CRLF = "\r\n";
 
 
 void main() {
@@ -395,18 +396,36 @@ void main() {
               /*
                 Вывод в COM номер канала, полученное значение АЦП, рассчитанное входное значение
               */
-              strConstCpy(textBuffer, ch0);           //"channel 0"
-              transmitStringln(textBuffer);           //Отправка строки в RS232
+              strConstCpy(textBuffer, ch0);         //"channel 0"
+              transmitString(textBuffer);           //Отправка строки в RS232
+              
+              /*
+                New line
+              */
+              strConstCpy(textBuffer, CRLF);        //"\r\n"
+              transmitString(textBuffer);           //Отправка строки в RS232
+              /*
+                New Line ending
+              */
 
               strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
               transmitString(textBuffer);
-              
+
               IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
               transmitString(textBuffer);             //Передача в RS232
               
+              /*
+                New line
+              */
+              strConstCpy(textBuffer, CRLF);        //"\r\n"
+              transmitString(textBuffer);           //Отправка строки в RS232
+              /*
+                New Line ending
+              */
+              
               strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
               transmitString(textBuffer);
-              
+
               FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
               transmitStringln(textBuffer);
 
@@ -430,27 +449,64 @@ void main() {
               /*
                 Вывод в COM номер канала, полученное значение АЦП, рассчитанное входное значение, рассчитанный коэффициент усиления
               */
+              
+              /*
+                New line
+              */
+              strConstCpy(textBuffer, CRLF);        //"\r\n"
+              transmitString(textBuffer);           //Отправка строки в RS232
+              /*
+                New Line ending
+              */
               strConstCpy(textBuffer, ch1);           //"channel 1"
               transmitStringln(textBuffer);           //Отправка строки в RS232
-              
+
               strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
               transmitString(textBuffer);
 
               IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
               transmitString(textBuffer);
               
+              /*
+                New line
+              */
+              strConstCpy(textBuffer, CRLF);        //"\r\n"
+              transmitString(textBuffer);           //Отправка строки в RS232
+              /*
+                New Line ending
+              */
+              
               strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
               transmitString(textBuffer);
-              
+
               FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
-              transmitStringln(textBuffer);
+              transmitString(textBuffer);
+              
+              /*
+                New line
+              */
+              strConstCpy(textBuffer, CRLF);        //"\r\n"
+              transmitString(textBuffer);           //Отправка строки в RS232
+              /*
+                New Line ending
+              */
               
               strConstCpy(textBuffer, GAIN_STR);     //"Gain: "
               transmitString(textBuffer);
-              
+
               FloatToStr(k, textBuffer);             //Расчитанный коэффициент усиления к строковому представлению
-              transmitStringln(textBuffer);
+              transmitString(textBuffer);
               
+              /*
+                New line
+              */
+              strConstCpy(textBuffer, CRLF);        //"\r\n"
+              transmitString(textBuffer);           //Отправка строки в RS232
+              transmitString(textBuffer);
+              /*
+                New Line ending
+              */
+
               Delay_ms(1000);                       //Задержка 1 сек.
      }
 }
