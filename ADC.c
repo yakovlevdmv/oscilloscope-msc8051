@@ -140,8 +140,31 @@ void drawPoint(int x, int y) {
      } else {
         LCD_CS1B = 1;
         LCD_CS2B = 0;
-        setYAddress(64 + (x % 64));
+//        setYAddress(64 + (x % 64));
+        setYAddress(x % 64);
      }
+     setZAddress(0);
+     limit = y % 8;
+     for (count = 0; count < limit - 1; count++) {
+          mask = mask << 1;
+     }
+     if(y > 0) {
+         mask = mask << 1;
+     }
+     writeData(mask);
+     LCD_EN = 0;
+}
+
+void drawPointCS2(int x, int y) {
+     int count = 0;
+     int limit = 0;
+     int mask = 0b00000001;
+     //int _cs = x / 64;
+     setXAddress(y/8);
+
+     LCD_CS1B = 1;
+     LCD_CS2B = 0;
+     setYAddress(x % 64);
      setZAddress(0);
      limit = y % 8;
      for (count = 0; count < limit - 1; count++) {
@@ -168,7 +191,7 @@ void resetPoint(int x, int y) {
      } else {
         LCD_CS1B = 1;
         LCD_CS2B = 0;
-        setYAddress(64 + (x % 64));
+        setYAddress(x % 64);
      }
      setZAddress(0);
      limit = y % 8;
@@ -590,13 +613,13 @@ void main() {
                       Запись бит, несущих полезную информацию в одно число
                     */
                     adc_result = parseADCValue(adc_data);
-                    
+
                     strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
                     transmitString(textBuffer);
 
                     IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
                     transmitString(textBuffer);             //Передача в RS232
-                    
+
                     /*
                       New line
                     */
@@ -605,7 +628,7 @@ void main() {
                     /*
                       New Line ending
                     */
-                    
+
                     y = 64 - adc_result / LCD_Y_LIMIT;
                     drawPoint(x, y);
                     x = x + 1;
@@ -621,5 +644,4 @@ void main() {
               //drawPoint(2,2);
               //Delay_ms(1000);
      }
-
 }
