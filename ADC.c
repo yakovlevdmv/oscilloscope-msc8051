@@ -4,7 +4,7 @@
  * This file is part of Oscilloscope on MCU intel8051 project.
  *
  * This project can not be copied and/or distributed without the express
- * permission of Palanjyan Zhorzhik and Hlib Nekrasov
+ * permission of Hlib Nekrasov
  *******************************************************/
 
 //Îïîðíîå íàïðÿæåíèå ÀÖÏ
