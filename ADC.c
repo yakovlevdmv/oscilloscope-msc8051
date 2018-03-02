@@ -1,10 +1,10 @@
  /*******************************************************
- * Copyright (C) 2017-2018 Palanjyan Zhorzhik jpalanjyan@gmail.com
+ * Copyright (C) 2017-2018 Palanjyan Zhorzhik (email: jpalanjyan@gmail.com), Hlib Nekrasov (email:ganekrasov@edu.hse.ru)
  *
- * This file is part of Oscilloscope on MCU intel8051.
+ * This file is part of Oscilloscope on MCU intel8051 project.
  *
  * This project can not be copied and/or distributed without the express
- * permission of Palanjyan Zhorzhik
+ * permission of Palanjyan Zhorzhik and Hlib Nekrasov
  *******************************************************/
 
 //Опорное напряжение АЦП
