@@ -154,6 +154,34 @@ void drawPoint(int x, int y) {
      LCD_EN = 0;
 }
 
+void resetPoint(int x, int y) {
+     int count = 0;
+     int limit = 0;
+     int mask = 0b00000000;
+     int _cs = x / 64;
+     setXAddress(y/8);
+
+     if (_cs == 0 ) {
+        LCD_CS1B = 0;
+        LCD_CS2B = 1;
+        setYAddress(x);
+     } else {
+        LCD_CS1B = 1;
+        LCD_CS2B = 0;
+        setYAddress(64 + (x % 64));
+     }
+     setZAddress(0);
+     limit = y % 8;
+//     for (count = 0; count < limit - 1; count++) {
+//          mask = mask << 1;
+//     }
+//     if(y > 0) {
+//         mask = mask << 1;
+//     }
+     writeData(mask);
+     LCD_EN = 0;
+}
+
 /*
   Структура, описывающая получаемые данные из АЦП
   
@@ -337,6 +365,10 @@ int parseADCValue(struct rcv_data *adc_data) {
        return 2. * (_data / 1000.);
  }
  
+ float getMainSignalValue(float gain, float ) {
+ 
+ }
+ 
 /*
   Most of the Microcontrolleres having limited RAM, For Avoiding the Errors Not Enough RAM and Strings problem (const truncated) .
   You have to move the strings to ROM (FLASH program) memory, and there by save RAM.
@@ -363,8 +395,11 @@ const char *INPUT_STR = "ADC input: ";
 const char *GAIN_STR = "Gain: ";
 const char *CRLF = "\r\n";
 
+const int LCD_X_LIMIT = 128;
+const int LCD_Y_LIMIT = 64;
 
-void main() {
+void debugADC() {
+
      char textBuffer[15];
      //char out_buffer[6]; // Результат АЦП - строка
      //char in_buffer[6]; // Вход АЦП - строка
@@ -372,16 +407,7 @@ void main() {
      int adc_result; // Результат АЦП - число
      float inputValue; // Вход АЦП - число
      float k; // Коэффициент усиления - число
-     
-     //float numBuffer;
-
-     initSPI(); //Инициализация SPI
-     rs232init(); // Инициализация RS232
-
-     CS = 1;
-     Delay_us(1);
-
-     while(1) {
+     float mainInputSignal;
               /*
                 Получение 3 бит, как результат работы АЦП
               */
@@ -390,15 +416,15 @@ void main() {
                 Запись бит, несущих полезную информацию в одно число
               */
               adc_result = parseADCValue(adc_data);
-              
+
               inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
-              
+
               /*
                 Вывод в COM номер канала, полученное значение АЦП, рассчитанное входное значение
               */
               strConstCpy(textBuffer, ch0);         //"channel 0"
               transmitString(textBuffer);           //Отправка строки в RS232
-              
+
               /*
                 New line
               */
@@ -413,7 +439,7 @@ void main() {
 
               IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
               transmitString(textBuffer);             //Передача в RS232
-              
+
               /*
                 New line
               */
@@ -422,7 +448,7 @@ void main() {
               /*
                 New Line ending
               */
-              
+
               strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
               transmitString(textBuffer);
 
@@ -430,7 +456,7 @@ void main() {
               transmitStringln(textBuffer);
 
               Delay_ms(1000);                         //Задержка в 1 секунду
-              
+
               /*
                 Получение 3 бита как результат работы АЦП
               */
@@ -445,11 +471,11 @@ void main() {
               */
               inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
               k = getGain(adc_result);                //Расчет коэффициента усиления
-              
+
               /*
                 Вывод в COM номер канала, полученное значение АЦП, рассчитанное входное значение, рассчитанный коэффициент усиления
               */
-              
+
               /*
                 New line
               */
@@ -466,7 +492,7 @@ void main() {
 
               IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
               transmitString(textBuffer);
-              
+
               /*
                 New line
               */
@@ -475,13 +501,13 @@ void main() {
               /*
                 New Line ending
               */
-              
+
               strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
               transmitString(textBuffer);
 
               FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
               transmitString(textBuffer);
-              
+
               /*
                 New line
               */
@@ -490,13 +516,13 @@ void main() {
               /*
                 New Line ending
               */
-              
+
               strConstCpy(textBuffer, GAIN_STR);     //"Gain: "
               transmitString(textBuffer);
 
               FloatToStr(k, textBuffer);             //Расчитанный коэффициент усиления к строковому представлению
               transmitString(textBuffer);
-              
+
               /*
                 New line
               */
@@ -508,5 +534,92 @@ void main() {
               */
 
               Delay_ms(1000);                       //Задержка 1 сек.
+}
+
+ void FillBrightness(int brightness) {
+     int x,y;
+     for(x = 0; x <=128; x++) {
+           for(y = 0; y <=64; y++) {
+                  resetPoint(x,y);
+           }
      }
+//     for(y=0;y<=64;y++) {
+//         for(x = 0; x <= 8; x++) {
+//               setYAddress(y);
+//               Delay_ms(500);
+//               setXAddress(x);
+//               Delay_ms(500);
+//               setZAddress(0);
+//               Delay_ms(500);
+//               writeData(brightness);
+//               Delay_ms(100);
+//         }
+//     }
+}
+
+void clear() {
+     FillBrightness(0);
+}
+
+void fill() {
+     FillBrightness(255);
+}
+
+void main() {
+     char textBuffer[15];
+     int adc_result, x, y; // Результат АЦП - число
+     int flag = 0;
+
+     initSPI(); //Инициализация SPI
+     rs232init(); // Инициализация RS232
+
+     CS = 1;
+     Delay_us(1);
+     y = 0;
+     x = 0;
+     //LCD
+     displayOn();
+     clear();
+     while(1) {
+//              if (flag == 0) {
+                     /*
+                      Получение 3 бит, как результат работы АЦП
+                    */
+                    *adc_data = adc_get_data(0);
+                    /*
+                      Запись бит, несущих полезную информацию в одно число
+                    */
+                    adc_result = parseADCValue(adc_data);
+                    
+                    strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
+                    transmitString(textBuffer);
+
+                    IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
+                    transmitString(textBuffer);             //Передача в RS232
+                    
+                    /*
+                      New line
+                    */
+                    strConstCpy(textBuffer, CRLF);        //"\r\n"
+                    transmitString(textBuffer);           //Отправка строки в RS232
+                    /*
+                      New Line ending
+                    */
+                    
+                    y = 64 - adc_result / LCD_Y_LIMIT;
+                    drawPoint(x, y);
+                    x = x + 1;
+                    if (x == 128) {
+//                       flag = 1;
+                       x = 0;
+                       clear();
+                    }
+
+//              }
+              //drawPoint(0,0);
+              //drawPoint(1,1);
+              //drawPoint(2,2);
+              //Delay_ms(1000);
+     }
+
 }
