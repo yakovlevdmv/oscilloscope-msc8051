@@ -1,3 +1,12 @@
+ /*******************************************************
+ * Copyright (C) 2017-2018 Palanjyan Zhorzhik jpalanjyan@gmail.com
+ *
+ * This file is part of Oscilloscope on MCU intel8051.
+ *
+ * This project can not be copied and/or distributed without the express
+ * permission of Palanjyan Zhorzhik
+ *******************************************************/
+
 //Опорное напряжение АЦП
 const float VREF = 4.096;
 
