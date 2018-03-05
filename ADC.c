@@ -14,12 +14,12 @@ const float VREF = 4.096;
 sbit CS at P2_0_bit;
 
 //Установка битов для GLCD экрана
-sbit LCD_CS1B at P2_2_bit; //+
-sbit LCD_CS2B at P2_3_bit; //+
-sbit LCD_RS   at P2_4_bit; //+
-sbit LCD_RW   at P2_5_bit; //+
-sbit LCD_EN   at P2_6_bit; //+
-sbit LCD_RST  at P2_7_bit; //0
+sbit LCD_CS1B at P2_2_bit;
+sbit LCD_CS2B at P2_3_bit;
+sbit LCD_RS   at P2_4_bit;
+sbit LCD_RW   at P2_5_bit;
+sbit LCD_EN   at P2_6_bit;
+sbit LCD_RST  at P2_7_bit;
 
 sbit LCD_D0 at P0_0_bit;
 sbit LCD_D1 at P0_1_bit;
@@ -152,28 +152,6 @@ void drawPoint(int x, int y) {
 //        setYAddress(64 + (x % 64));
         setYAddress(x % 64);
      }
-     setZAddress(0);
-     limit = y % 8;
-     for (count = 0; count < limit - 1; count++) {
-          mask = mask << 1;
-     }
-     if(y > 0) {
-         mask = mask << 1;
-     }
-     writeData(mask);
-     LCD_EN = 0;
-}
-
-void drawPointCS2(int x, int y) {
-     int count = 0;
-     int limit = 0;
-     int mask = 0b00000001;
-     //int _cs = x / 64;
-     setXAddress(y/8);
-
-     LCD_CS1B = 1;
-     LCD_CS2B = 0;
-     setYAddress(x % 64);
      setZAddress(0);
      limit = y % 8;
      for (count = 0; count < limit - 1; count++) {
@@ -414,12 +392,119 @@ int parseADCValue(struct rcv_data *adc_data) {
 */
 // Copying strings from ROM to RAM
 void strConstCpy(char *dest, const char *source) {
-  while(*source)
-  *dest++ = *source++ ;
-
-  *dest = 0 ;
+     while(*source) {
+           *dest++ = *source++;
+     }
+     *dest = 0 ;
 }
 
+const char *num9[] = {"00000000",  //9
+                      "01111110",
+                      "01000010",
+                      "01111110",
+                      "00000010",
+                      "00000010",
+                      "01111110",
+                      "00000000"};
+
+const char *num8[] = {"00000000",  //8
+                      "01111110",
+                      "01000010",
+                      "01111110",
+                      "01000010",
+                      "01000010",
+                      "01111110",
+                      "00000000"};
+
+const char *num7[] = {"00000000",  //7
+                      "01111110",
+                      "00000010",
+                      "00000100",
+                      "00000100",
+                      "00001000",
+                      "00001000",
+                      "00000000"};
+
+const char *num6[] = {"00000000",  //6
+                      "01111110",
+                      "01000000",
+                      "01111110",
+                      "01000010",
+                      "01000010",
+                      "01111110",
+                      "00000000"};
+
+const char *num5[] = {"00000000",  //5
+                      "01111110",
+                      "01000000",
+                      "01111110",
+                      "00000010",
+                      "00000010",
+                      "01111110",
+                      "00000000"};
+
+const char *num4[] = {"00000000",  //4
+                      "00000110",
+                      "00001010",
+                      "00010010",
+                      "00111111",
+                      "00000010",
+                      "00000010",
+                      "00000000"};
+
+const char *num3[] = {"00000000",  //3
+                      "01111110",
+                      "00000010",
+                      "01111110",
+                      "00000010",
+                      "00000010",
+                      "01111110",
+                      "00000000"};
+
+const char *num2[] = {"00000000",  //2
+                      "01111110",
+                      "00000010",
+                      "01111110",
+                      "01000000",
+                      "01000000",
+                      "01111110",
+                      "00000000"};
+                      
+const char *num1[] = {"00000000",  //1
+                      "00001000",
+                      "00011000",
+                      "00001000",
+                      "00001000",
+                      "00001000",
+                      "00111110",
+                      "00000000"};
+                      
+const char *num0[] = {"00000000",  //0
+                      "01111110",
+                      "01000010",
+                      "01000010",
+                      "01000010",
+                      "01000010",
+                      "01111110",
+                      "00000000"};
+
+const char *numDot[] = {"00000000",  //.
+                        "00000000",
+                        "00000000",
+                        "00000000",
+                        "00000000",
+                        "00000000",
+                        "01000000",
+                        "00000000"};
+                      
+const char *numComma[] = {"00000000",  //,
+                          "00000000",
+                          "00000000",
+                          "00000000",
+                          "00000000",
+                          "00000000",
+                          "01100000",
+                          "00100000"};
 const char *ch0 = "channel 0";
 const char *ch1 = "channel 1";
 const char *RESULT_STR = "ADC result: ";
@@ -568,33 +653,44 @@ void debugADC() {
               Delay_ms(1000);                       //Задержка 1 сек.
 }
 
- void FillBrightness(int brightness) {
+ void FillBrightness(int limit) {
      int x,y;
-     for(x = 0; x <=128; x++) {
+     for(x = 0; x <=limit; x++) {
            for(y = 0; y <=64; y++) {
                   resetPoint(x,y);
            }
      }
-//     for(y=0;y<=64;y++) {
-//         for(x = 0; x <= 8; x++) {
-//               setYAddress(y);
-//               Delay_ms(500);
-//               setXAddress(x);
-//               Delay_ms(500);
-//               setZAddress(0);
-//               Delay_ms(500);
-//               writeData(brightness);
-//               Delay_ms(100);
-//         }
-//     }
 }
 
-void clear() {
-     FillBrightness(0);
+void clear(int limit) {
+     FillBrightness(limit);
 }
 
 void fill() {
      FillBrightness(255);
+}
+
+void drawVLine(int column) {
+     int count = 0;
+     int mask = 0b11111111;
+     int _cs = column / 64;
+
+     for(count = 0; count < 8; count++) {
+       if (_cs == 0 ) {
+          LCD_CS1B = 0;
+          LCD_CS2B = 1;
+          setYAddress(column);
+       } else {
+          LCD_CS1B = 1;
+          LCD_CS2B = 0;
+          setYAddress(column % 64);
+       }
+       setXAddress(count);
+       setZAddress(0);
+       writeData(mask);
+     }
+
+     LCD_EN = 0;
 }
 
 void main() {
@@ -611,46 +707,30 @@ void main() {
      x = 0;
      //LCD
      displayOn();
-     clear();
+     clear(128);
+     adc_result = 4000;
+     drawVLine(100);
      while(1) {
-//              if (flag == 0) {
-                     /*
-                      Получение 3 бит, как результат работы АЦП
-                    */
-                    *adc_data = adc_get_data(0);
-                    /*
-                      Запись бит, несущих полезную информацию в одно число
-                    */
+
+                    *adc_data = adc_get_data(1);
                     adc_result = parseADCValue(adc_data);
 
-                    strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
+                    strConstCpy(textBuffer, RESULT_STR);
                     transmitString(textBuffer);
 
-                    IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
-                    transmitString(textBuffer);             //Передача в RS232
+                    IntToStr(adc_result, textBuffer);
+                    transmitString(textBuffer);
 
-                    /*
-                      New line
-                    */
-                    strConstCpy(textBuffer, CRLF);        //"\r\n"
-                    transmitString(textBuffer);           //Отправка строки в RS232
-                    /*
-                      New Line ending
-                    */
+                    strConstCpy(textBuffer, CRLF);
+                    transmitString(textBuffer);
 
                     y = 64 - adc_result / LCD_Y_LIMIT;
+                    y = y - 1;
                     drawPoint(x, y);
                     x = x + 1;
-                    if (x == 128) {
-//                       flag = 1;
+                    if (x == 100) {
                        x = 0;
-                       clear();
+                       clear(99);
                     }
-
-//              }
-              //drawPoint(0,0);
-              //drawPoint(1,1);
-              //drawPoint(2,2);
-              //Delay_ms(1000);
      }
 }
