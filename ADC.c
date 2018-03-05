@@ -7,8 +7,10 @@
  * permission of Hlib Nekrasov
  *******************************************************/
 
+//Îïîðíîå íàïðÿæåíèå ÀÖÏ
 const float VREF = 4.096;
 
+//Áèò chip select äëÿ ÀÖÏ MCP3204
 sbit CS at P2_0_bit;
 
 //��������� ����� ��� GLCD ������
@@ -18,6 +20,7 @@ sbit LCD_RS   at P2_4_bit;
 sbit LCD_RW   at P2_5_bit;
 sbit LCD_EN   at P2_6_bit;
 sbit LCD_RST  at P2_7_bit;
+
 
 sbit LCD_D0 at P0_0_bit;
 sbit LCD_D1 at P0_1_bit;
@@ -709,43 +712,22 @@ void main() {
      adc_result = 4000;
      drawVLine(100);
      while(1) {
-<<<<<<< HEAD
+
 
                     *adc_data = adc_get_data(1);
-=======
-//              if (flag == 0) {
-                     /*
-                      Ïîëó÷åíèå 3 áèò, êàê ðåçóëüòàò ðàáîòû ÀÖÏ
-                    */
-                    *adc_data = adc_get_data(0);
-                    /*
-                      Çàïèñü áèò, íåñóùèõ ïîëåçíóþ èíôîðìàöèþ â îäíî ÷èñëî
-                    */
->>>>>>> 6b324bfa55aa50e21c2b9e01f590742e4ba1fe78
+
                     adc_result = parseADCValue(adc_data);
 
                     strConstCpy(textBuffer, RESULT_STR);
                     transmitString(textBuffer);
 
-<<<<<<< HEAD
+
                     IntToStr(adc_result, textBuffer);
                     transmitString(textBuffer);
 
                     strConstCpy(textBuffer, CRLF);
                     transmitString(textBuffer);
-=======
-                    IntToStr(adc_result, textBuffer);       //Ðåçóëüòàò ÀÖÏ ê ñòðîêîâîìó ïðåäñòàâëåíèþ
-                    transmitString(textBuffer);             //Ïåðåäà÷à â RS232
 
-                    /*
-                      New line
-                    */
-                    strConstCpy(textBuffer, CRLF);        //"\r\n"
-                    transmitString(textBuffer);           //Îòïðàâêà ñòðîêè â RS232
-                    /*
-                      New Line ending
-                    */
->>>>>>> 6b324bfa55aa50e21c2b9e01f590742e4ba1fe78
 
                     y = 64 - adc_result / LCD_Y_LIMIT;
                     y = y - 1;
