@@ -1,16 +1,14 @@
  /*******************************************************
- * Copyright (C) 2017-2018 Palanjyan Zhorzhik (email: jpalanjyan@gmail.com), Hlib Nekrasov (email:ganekrasov@edu.hse.ru)
+ * Copyright (C) Hlib Nekrasov (email:ganekrasov@edu.hse.ru)
  *
  * This file is part of Oscilloscope on MCU intel8051 project.
  *
  * This project can not be copied and/or distributed without the express
- * permission of Palanjyan Zhorzhik and Hlib Nekrasov
+ * permission of Hlib Nekrasov
  *******************************************************/
 
-//Опорное напряжение АЦП
 const float VREF = 4.096;
 
-//Бит chip select для АЦП MCP3204
 sbit CS at P2_0_bit;
 
 //Установка битов для GLCD экрана
@@ -31,7 +29,7 @@ sbit LCD_D6 at P0_6_bit;
 sbit LCD_D7 at P0_7_bit;
 
 /*
-   Установка адреса X GLCD экрана
+   Г“Г±ГІГ Г­Г®ГўГЄГ  Г Г¤Г°ГҐГ±Г  X GLCD ГЅГЄГ°Г Г­Г 
 */
 void setXAddress(int x) {
      LCD_EN = 0;
@@ -45,7 +43,7 @@ void setXAddress(int x) {
 }
 
 /*
-   Установка адреса Y GLCD экрана
+   Г“Г±ГІГ Г­Г®ГўГЄГ  Г Г¤Г°ГҐГ±Г  Y GLCD ГЅГЄГ°Г Г­Г 
 */
 void setYAddress(int y) {
      LCD_EN = 0;
@@ -59,7 +57,7 @@ void setYAddress(int y) {
 }
 
 /*
-   Установка адреса Z GLCD экрана
+   Г“Г±ГІГ Г­Г®ГўГЄГ  Г Г¤Г°ГҐГ±Г  Z GLCD ГЅГЄГ°Г Г­Г 
 */
 void setZAddress(int z) {
      LCD_EN = 0;
@@ -73,7 +71,7 @@ void setZAddress(int z) {
 }
 
 /*
-   Запись данный в GLCD RAM по текущему адресу
+   Г‡Г ГЇГЁГ±Гј Г¤Г Г­Г­Г»Г© Гў GLCD RAM ГЇГ® ГІГҐГЄГіГ№ГҐГ¬Гі Г Г¤Г°ГҐГ±Гі
 */
 void writeData(char _data) {
     LCD_EN = 0;
@@ -85,9 +83,9 @@ void writeData(char _data) {
 }
 
 /*
-   Чтение данный в GLCD RAM по текущему адресу
+   Г—ГІГҐГ­ГЁГҐ Г¤Г Г­Г­Г»Г© Гў GLCD RAM ГЇГ® ГІГҐГЄГіГ№ГҐГ¬Гі Г Г¤Г°ГҐГ±Гі
 
-   PS.: Не работает
+   PS.: ГЌГҐ Г°Г ГЎГ®ГІГ ГҐГІ
 */
 int readData(int x, int y) {
     int buf = 0;
@@ -116,7 +114,7 @@ int readData(int x, int y) {
 }
 
 /*
-  Включение GLCD экрана (инициализация)
+  Г‚ГЄГ«ГѕГ·ГҐГ­ГЁГҐ GLCD ГЅГЄГ°Г Г­Г  (ГЁГ­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї)
 */
 void displayOn() {
     LCD_EN = 1;
@@ -125,15 +123,15 @@ void displayOn() {
 
     P0 = 0x3f;
 
-    //Включаем две половинки
+    //Г‚ГЄГ«ГѕГ·Г ГҐГ¬ Г¤ГўГҐ ГЇГ®Г«Г®ГўГЁГ­ГЄГЁ
     LCD_CS1B=0;
     LCD_CS2B=0;
 }
 
 /*
-  Рисуем точку на GLCD по координатам
-  x - абцисса,  0 - 128
-  y - ордината, 0 - 64
+  ГђГЁГ±ГіГҐГ¬ ГІГ®Г·ГЄГі Г­Г  GLCD ГЇГ® ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ Г¬
+  x - Г ГЎГ¶ГЁГ±Г±Г ,  0 - 128
+  y - Г®Г°Г¤ГЁГ­Г ГІГ , 0 - 64
 */
 void drawPoint(int x, int y) {
      int count = 0;
@@ -193,15 +191,15 @@ void resetPoint(int x, int y) {
 }
 
 /*
-  Структура, описывающая получаемые данные из АЦП
+  Г‘ГІГ°ГіГЄГІГіГ°Г , Г®ГЇГЁГ±Г»ГўГ ГѕГ№Г Гї ГЇГ®Г«ГіГ·Г ГҐГ¬Г»ГҐ Г¤Г Г­Г­Г»ГҐ ГЁГ§ ГЂГ–ГЏ
   
   first  - 0bxxxxxxnd
   second - 0bdddddddd
   third  - 0bdddxxxxx
-  , где x - бит не несущий информации
-        n - null бит - индикатор начала полезных данных,
-            за ним следует 12 бит результата работы АЦП
-        d - бит, содержащий результат работы АЦП
+  , ГЈГ¤ГҐ x - ГЎГЁГІ Г­ГҐ Г­ГҐГ±ГіГ№ГЁГ© ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ
+        n - null ГЎГЁГІ - ГЁГ­Г¤ГЁГЄГ ГІГ®Г° Г­Г Г·Г Г«Г  ГЇГ®Г«ГҐГ§Г­Г»Гµ Г¤Г Г­Г­Г»Гµ,
+            Г§Г  Г­ГЁГ¬ Г±Г«ГҐГ¤ГіГҐГІ 12 ГЎГЁГІ Г°ГҐГ§ГіГ«ГјГІГ ГІГ  Г°Г ГЎГ®ГІГ» ГЂГ–ГЏ
+        d - ГЎГЁГІ, Г±Г®Г¤ГҐГ°Г¦Г Г№ГЁГ© Г°ГҐГ§ГіГ«ГјГІГ ГІ Г°Г ГЎГ®ГІГ» ГЂГ–ГЏ
 */
 struct rcv_data {
        short first;
@@ -210,8 +208,8 @@ struct rcv_data {
 } *adc_data;
 
 /*
-  Инициализация АЦП.
-  см. Спецификацию MCP3204
+  Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЂГ–ГЏ.
+  Г±Г¬. Г‘ГЇГҐГ¶ГЁГґГЁГЄГ Г¶ГЁГѕ MCP3204
 */
 void initSPI() {
      SPCR = 0b01010001;
@@ -219,7 +217,7 @@ void initSPI() {
 }
 
 /*
-  Инициализация интерфейса RS232 (COM-порт)
+  Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї ГЁГ­ГІГҐГ°ГґГҐГ©Г±Г  RS232 (COM-ГЇГ®Г°ГІ)
   
   Copyright Palanjyan Zhorzhik
 */
@@ -234,7 +232,7 @@ void rs232init() {
 }
 
 /*
-  Пересылка данных через интерфейс RS232 (COM-порт)
+  ГЏГҐГ°ГҐГ±Г»Г«ГЄГ  Г¤Г Г­Г­Г»Гµ Г·ГҐГ°ГҐГ§ ГЁГ­ГІГҐГ°ГґГҐГ©Г± RS232 (COM-ГЇГ®Г°ГІ)
 
   Copyright Palanjyan Zhorzhik
 */
@@ -266,14 +264,14 @@ void transmitStringln(char* str) {
 }
 
 /*
-  Запись в SPI интерфейс
+  Г‡Г ГЇГЁГ±Гј Гў SPI ГЁГ­ГІГҐГ°ГґГҐГ©Г±
 */
 void writeSPI(int _data) {
      SPDR = _data;
 }
 
 /*
-  Чтение из SPI интерфейса
+  Г—ГІГҐГ­ГЁГҐ ГЁГ§ SPI ГЁГ­ГІГҐГ°ГґГҐГ©Г±Г 
 */
 int readSPI() {
     int _data;
@@ -282,18 +280,18 @@ int readSPI() {
 }
 
 /*
-  Задержка
+  Г‡Г Г¤ГҐГ°Г¦ГЄГ 
 */
 void delay() {
     Delay_ms(1000);
 }
 
 /*
-  Получение результата работы АЦП
-  Аргумент channel - номер канала, для считывания
+  ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ Г°ГҐГ§ГіГ«ГјГІГ ГІГ  Г°Г ГЎГ®ГІГ» ГЂГ–ГЏ
+  ГЂГ°ГЈГіГ¬ГҐГ­ГІ channel - Г­Г®Г¬ГҐГ° ГЄГ Г­Г Г«Г , Г¤Г«Гї Г±Г·ГЁГІГ»ГўГ Г­ГЁГї
 */
 struct rcv_data adc_get_data(int channel) {
-         struct rcv_data _data; //Структура, для хранения поленных данных
+         struct rcv_data _data; //Г‘ГІГ°ГіГЄГІГіГ°Г , Г¤Г«Гї ГµГ°Г Г­ГҐГ­ГЁГї ГЇГ®Г«ГҐГ­Г­Г»Гµ Г¤Г Г­Г­Г»Гµ
          int SPI_init_data = 0b11000000;
          if(channel == 0) {
                     SPI_init_data += 0b00000000;
@@ -305,18 +303,18 @@ struct rcv_data adc_get_data(int channel) {
                     SPI_init_data += 0b00011000;
          }
          P0 = SPI_init_data;
-         CS = 0; //Включение АЦП
+         CS = 0; //Г‚ГЄГ«ГѕГ·ГҐГ­ГЁГҐ ГЂГ–ГЏ
 
          /*
-           Отправка данных через SPI для установки режима и запуска АЦП
+           ГЋГІГЇГ°Г ГўГЄГ  Г¤Г Г­Г­Г»Гµ Г·ГҐГ°ГҐГ§ SPI Г¤Г«Гї ГіГ±ГІГ Г­Г®ГўГЄГЁ Г°ГҐГ¦ГЁГ¬Г  ГЁ Г§Г ГЇГіГ±ГЄГ  ГЂГ–ГЏ
          */
-         writeSPI(SPI_init_data);       //Отправка данных для установки режима АЦП
-         while(SPIF_bit != 1) {}     //Ждем конца отправки
-         _data.first = readSPI(); //Читаем результат
-         //transmit(_data.first);   //Отапрвка результата в COM
+         writeSPI(SPI_init_data);       //ГЋГІГЇГ°Г ГўГЄГ  Г¤Г Г­Г­Г»Гµ Г¤Г«Гї ГіГ±ГІГ Г­Г®ГўГЄГЁ Г°ГҐГ¦ГЁГ¬Г  ГЂГ–ГЏ
+         while(SPIF_bit != 1) {}     //Г†Г¤ГҐГ¬ ГЄГ®Г­Г¶Г  Г®ГІГЇГ°Г ГўГЄГЁ
+         _data.first = readSPI(); //Г—ГЁГІГ ГҐГ¬ Г°ГҐГ§ГіГ«ГјГІГ ГІ
+         //transmit(_data.first);   //ГЋГІГ ГЇГ°ГўГЄГ  Г°ГҐГ§ГіГ«ГјГІГ ГІГ  Гў COM
 
-         writeSPI(0b00000000); //Отправка данных
-         while(SPIF_bit != 1) {} //Ждем конца отправки
+         writeSPI(0b00000000); //ГЋГІГЇГ°Г ГўГЄГ  Г¤Г Г­Г­Г»Гµ
+         while(SPIF_bit != 1) {} //Г†Г¤ГҐГ¬ ГЄГ®Г­Г¶Г  Г®ГІГЇГ°Г ГўГЄГЁ
          _data.second = readSPI();
          //transmit(_data.second);
 
@@ -331,7 +329,7 @@ struct rcv_data adc_get_data(int channel) {
 }
 
 /*
-  Получить n-ый бит из байта
+  ГЏГ®Г«ГіГ·ГЁГІГј n-Г»Г© ГЎГЁГІ ГЁГ§ ГЎГ Г©ГІГ 
 */
 int getBit(int position, int byte) {
     return (byte >> position) & 1;
@@ -357,19 +355,19 @@ int parseADCValue(struct rcv_data *adc_data) {
 }
 
  /*
-   Расчет входного значения АЦП на основе его выходных данных
+   ГђГ Г±Г·ГҐГІ ГўГµГ®Г¤Г­Г®ГЈГ® Г§Г­Г Г·ГҐГ­ГЁГї ГЂГ–ГЏ Г­Г  Г®Г±Г­Г®ГўГҐ ГҐГЈГ® ГўГ»ГµГ®Г¤Г­Г»Гµ Г¤Г Г­Г­Г»Гµ
  */
  float getInputValue(int _data) {
        return 4.096 * _data / 4096;
  }
  /*
-   Расчет коэффициента усиления.
-   Максимальное входное напряжение 32В. Вход АЦП ограничен 4 вольтами (MCP3204).
-   Кус = Uвых/Uвх. Максимальный для данной схемы Кус = 4В/32В = 1/8.
-   Вход АЦП ограничен 4 вольтами => коэф усиления пропускаем через резистивный делитель на 2 (Кус = 1/2).
-   Получаем, что при Кус=8, на вход АЦП подается 4В, при Кус=4, на вход АЦП подается 2В и т.д.
-   Таким образом коэф. усиления расчитываем по след. формуле:
-         Кус = 2 * ADC_OUT_CH1/1000
+   ГђГ Г±Г·ГҐГІ ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ  ГіГ±ГЁГ«ГҐГ­ГЁГї.
+   ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ ГўГµГ®Г¤Г­Г®ГҐ Г­Г ГЇГ°ГїГ¦ГҐГ­ГЁГҐ 32Г‚. Г‚ГµГ®Г¤ ГЂГ–ГЏ Г®ГЈГ°Г Г­ГЁГ·ГҐГ­ 4 ГўГ®Г«ГјГІГ Г¬ГЁ (MCP3204).
+   ГЉГіГ± = UГўГ»Гµ/UГўГµ. ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г»Г© Г¤Г«Гї Г¤Г Г­Г­Г®Г© Г±ГµГҐГ¬Г» ГЉГіГ± = 4Г‚/32Г‚ = 1/8.
+   Г‚ГµГ®Г¤ ГЂГ–ГЏ Г®ГЈГ°Г Г­ГЁГ·ГҐГ­ 4 ГўГ®Г«ГјГІГ Г¬ГЁ => ГЄГ®ГЅГґ ГіГ±ГЁГ«ГҐГ­ГЁГї ГЇГ°Г®ГЇГіГ±ГЄГ ГҐГ¬ Г·ГҐГ°ГҐГ§ Г°ГҐГ§ГЁГ±ГІГЁГўГ­Г»Г© Г¤ГҐГ«ГЁГІГҐГ«Гј Г­Г  2 (ГЉГіГ± = 1/2).
+   ГЏГ®Г«ГіГ·Г ГҐГ¬, Г·ГІГ® ГЇГ°ГЁ ГЉГіГ±=8, Г­Г  ГўГµГ®Г¤ ГЂГ–ГЏ ГЇГ®Г¤Г ГҐГІГ±Гї 4Г‚, ГЇГ°ГЁ ГЉГіГ±=4, Г­Г  ГўГµГ®Г¤ ГЂГ–ГЏ ГЇГ®Г¤Г ГҐГІГ±Гї 2Г‚ ГЁ ГІ.Г¤.
+   Г’Г ГЄГЁГ¬ Г®ГЎГ°Г Г§Г®Г¬ ГЄГ®ГЅГґ. ГіГ±ГЁГ«ГҐГ­ГЁГї Г°Г Г±Г·ГЁГІГ»ГўГ ГҐГ¬ ГЇГ® Г±Г«ГҐГ¤. ГґГ®Г°Г¬ГіГ«ГҐ:
+         ГЉГіГ± = 2 * ADC_OUT_CH1/1000
  */
  float getGain(int _data) {
        return 2. * (_data / 1000.);
@@ -518,35 +516,35 @@ const int LCD_Y_LIMIT = 64;
 void debugADC() {
 
      char textBuffer[15];
-     //char out_buffer[6]; // Результат АЦП - строка
-     //char in_buffer[6]; // Вход АЦП - строка
-     //char k_buffer[6]; // Коэффициент усиления
-     int adc_result; // Результат АЦП - число
-     float inputValue; // Вход АЦП - число
-     float k; // Коэффициент усиления - число
+     //char out_buffer[6]; // ГђГҐГ§ГіГ«ГјГІГ ГІ ГЂГ–ГЏ - Г±ГІГ°Г®ГЄГ 
+     //char in_buffer[6]; // Г‚ГµГ®Г¤ ГЂГ–ГЏ - Г±ГІГ°Г®ГЄГ 
+     //char k_buffer[6]; // ГЉГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІ ГіГ±ГЁГ«ГҐГ­ГЁГї
+     int adc_result; // ГђГҐГ§ГіГ«ГјГІГ ГІ ГЂГ–ГЏ - Г·ГЁГ±Г«Г®
+     float inputValue; // Г‚ГµГ®Г¤ ГЂГ–ГЏ - Г·ГЁГ±Г«Г®
+     float k; // ГЉГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІ ГіГ±ГЁГ«ГҐГ­ГЁГї - Г·ГЁГ±Г«Г®
      float mainInputSignal;
               /*
-                Получение 3 бит, как результат работы АЦП
+                ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ 3 ГЎГЁГІ, ГЄГ ГЄ Г°ГҐГ§ГіГ«ГјГІГ ГІ Г°Г ГЎГ®ГІГ» ГЂГ–ГЏ
               */
               *adc_data = adc_get_data(0);
               /*
-                Запись бит, несущих полезную информацию в одно число
+                Г‡Г ГЇГЁГ±Гј ГЎГЁГІ, Г­ГҐГ±ГіГ№ГЁГµ ГЇГ®Г«ГҐГ§Г­ГіГѕ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Гў Г®Г¤Г­Г® Г·ГЁГ±Г«Г®
               */
               adc_result = parseADCValue(adc_data);
 
-              inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
+              inputValue = getInputValue(adc_result); //ГЏГҐГ°ГҐГ±Г·ГҐГІ ГўГµГ®Г¤Г­Г®ГЈГ® Г§Г­Г Г·ГҐГ­ГЁГї Г­Г  Г®Г±Г­Г®ГўГҐ ГўГ»ГµГ®Г¤Г­Г®ГЈГ®
 
               /*
-                Вывод в COM номер канала, полученное значение АЦП, рассчитанное входное значение
+                Г‚Г»ГўГ®Г¤ Гў COM Г­Г®Г¬ГҐГ° ГЄГ Г­Г Г«Г , ГЇГ®Г«ГіГ·ГҐГ­Г­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ ГЂГ–ГЏ, Г°Г Г±Г±Г·ГЁГІГ Г­Г­Г®ГҐ ГўГµГ®Г¤Г­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ
               */
               strConstCpy(textBuffer, ch0);         //"channel 0"
-              transmitString(textBuffer);           //Отправка строки в RS232
+              transmitString(textBuffer);           //ГЋГІГЇГ°Г ГўГЄГ  Г±ГІГ°Г®ГЄГЁ Гў RS232
 
               /*
                 New line
               */
               strConstCpy(textBuffer, CRLF);        //"\r\n"
-              transmitString(textBuffer);           //Отправка строки в RS232
+              transmitString(textBuffer);           //ГЋГІГЇГ°Г ГўГЄГ  Г±ГІГ°Г®ГЄГЁ Гў RS232
               /*
                 New Line ending
               */
@@ -554,14 +552,14 @@ void debugADC() {
               strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
               transmitString(textBuffer);
 
-              IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
-              transmitString(textBuffer);             //Передача в RS232
+              IntToStr(adc_result, textBuffer);       //ГђГҐГ§ГіГ«ГјГІГ ГІ ГЂГ–ГЏ ГЄ Г±ГІГ°Г®ГЄГ®ГўГ®Г¬Гі ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГѕ
+              transmitString(textBuffer);             //ГЏГҐГ°ГҐГ¤Г Г·Г  Гў RS232
 
               /*
                 New line
               */
               strConstCpy(textBuffer, CRLF);        //"\r\n"
-              transmitString(textBuffer);           //Отправка строки в RS232
+              transmitString(textBuffer);           //ГЋГІГЇГ°Г ГўГЄГ  Г±ГІГ°Г®ГЄГЁ Гў RS232
               /*
                 New Line ending
               */
@@ -569,52 +567,52 @@ void debugADC() {
               strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
               transmitString(textBuffer);
 
-              FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
+              FloatToStr(inputValue, textBuffer);     //ГђГ Г±Г·ГЁГІГ Г­Г­Г®ГҐ ГўГµГ®Г¤Г­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ ГЄ Г±ГІГ°Г®ГЄГ®ГўГ®Г¬Гі ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГѕ
               transmitStringln(textBuffer);
 
-              Delay_ms(1000);                         //Задержка в 1 секунду
+              Delay_ms(1000);                         //Г‡Г Г¤ГҐГ°Г¦ГЄГ  Гў 1 Г±ГҐГЄГіГ­Г¤Гі
 
               /*
-                Получение 3 бита как результат работы АЦП
+                ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ 3 ГЎГЁГІГ  ГЄГ ГЄ Г°ГҐГ§ГіГ«ГјГІГ ГІ Г°Г ГЎГ®ГІГ» ГЂГ–ГЏ
               */
               *adc_data = adc_get_data(1);
               /*
-                Получение полезных битов и их запись в одно число
+                ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ ГЇГ®Г«ГҐГ§Г­Г»Гµ ГЎГЁГІГ®Гў ГЁ ГЁГµ Г§Г ГЇГЁГ±Гј Гў Г®Г¤Г­Г® Г·ГЁГ±Г«Г®
               */
               adc_result = parseADCValue(adc_data);
 
               /*
-                Пересчет входного значения на основе выходного
+                ГЏГҐГ°ГҐГ±Г·ГҐГІ ГўГµГ®Г¤Г­Г®ГЈГ® Г§Г­Г Г·ГҐГ­ГЁГї Г­Г  Г®Г±Г­Г®ГўГҐ ГўГ»ГµГ®Г¤Г­Г®ГЈГ®
               */
-              inputValue = getInputValue(adc_result); //Пересчет входного значения на основе выходного
-              k = getGain(adc_result);                //Расчет коэффициента усиления
+              inputValue = getInputValue(adc_result); //ГЏГҐГ°ГҐГ±Г·ГҐГІ ГўГµГ®Г¤Г­Г®ГЈГ® Г§Г­Г Г·ГҐГ­ГЁГї Г­Г  Г®Г±Г­Г®ГўГҐ ГўГ»ГµГ®Г¤Г­Г®ГЈГ®
+              k = getGain(adc_result);                //ГђГ Г±Г·ГҐГІ ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ  ГіГ±ГЁГ«ГҐГ­ГЁГї
 
               /*
-                Вывод в COM номер канала, полученное значение АЦП, рассчитанное входное значение, рассчитанный коэффициент усиления
+                Г‚Г»ГўГ®Г¤ Гў COM Г­Г®Г¬ГҐГ° ГЄГ Г­Г Г«Г , ГЇГ®Г«ГіГ·ГҐГ­Г­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ ГЂГ–ГЏ, Г°Г Г±Г±Г·ГЁГІГ Г­Г­Г®ГҐ ГўГµГ®Г¤Г­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ, Г°Г Г±Г±Г·ГЁГІГ Г­Г­Г»Г© ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІ ГіГ±ГЁГ«ГҐГ­ГЁГї
               */
 
               /*
                 New line
               */
               strConstCpy(textBuffer, CRLF);        //"\r\n"
-              transmitString(textBuffer);           //Отправка строки в RS232
+              transmitString(textBuffer);           //ГЋГІГЇГ°Г ГўГЄГ  Г±ГІГ°Г®ГЄГЁ Гў RS232
               /*
                 New Line ending
               */
               strConstCpy(textBuffer, ch1);           //"channel 1"
-              transmitStringln(textBuffer);           //Отправка строки в RS232
+              transmitStringln(textBuffer);           //ГЋГІГЇГ°Г ГўГЄГ  Г±ГІГ°Г®ГЄГЁ Гў RS232
 
               strConstCpy(textBuffer, RESULT_STR);    //"ADC result: "
               transmitString(textBuffer);
 
-              IntToStr(adc_result, textBuffer);       //Результат АЦП к строковому представлению
+              IntToStr(adc_result, textBuffer);       //ГђГҐГ§ГіГ«ГјГІГ ГІ ГЂГ–ГЏ ГЄ Г±ГІГ°Г®ГЄГ®ГўГ®Г¬Гі ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГѕ
               transmitString(textBuffer);
 
               /*
                 New line
               */
               strConstCpy(textBuffer, CRLF);        //"\r\n"
-              transmitString(textBuffer);           //Отправка строки в RS232
+              transmitString(textBuffer);           //ГЋГІГЇГ°Г ГўГЄГ  Г±ГІГ°Г®ГЄГЁ Гў RS232
               /*
                 New Line ending
               */
@@ -622,14 +620,14 @@ void debugADC() {
               strConstCpy(textBuffer, INPUT_STR);     //"ADC input: "
               transmitString(textBuffer);
 
-              FloatToStr(inputValue, textBuffer);     //Расчитанное входное значение к строковому представлению
+              FloatToStr(inputValue, textBuffer);     //ГђГ Г±Г·ГЁГІГ Г­Г­Г®ГҐ ГўГµГ®Г¤Г­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ ГЄ Г±ГІГ°Г®ГЄГ®ГўГ®Г¬Гі ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГѕ
               transmitString(textBuffer);
 
               /*
                 New line
               */
               strConstCpy(textBuffer, CRLF);        //"\r\n"
-              transmitString(textBuffer);           //Отправка строки в RS232
+              transmitString(textBuffer);           //ГЋГІГЇГ°Г ГўГЄГ  Г±ГІГ°Г®ГЄГЁ Гў RS232
               /*
                 New Line ending
               */
@@ -637,20 +635,20 @@ void debugADC() {
               strConstCpy(textBuffer, GAIN_STR);     //"Gain: "
               transmitString(textBuffer);
 
-              FloatToStr(k, textBuffer);             //Расчитанный коэффициент усиления к строковому представлению
+              FloatToStr(k, textBuffer);             //ГђГ Г±Г·ГЁГІГ Г­Г­Г»Г© ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІ ГіГ±ГЁГ«ГҐГ­ГЁГї ГЄ Г±ГІГ°Г®ГЄГ®ГўГ®Г¬Гі ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГѕ
               transmitString(textBuffer);
 
               /*
                 New line
               */
               strConstCpy(textBuffer, CRLF);        //"\r\n"
-              transmitString(textBuffer);           //Отправка строки в RS232
+              transmitString(textBuffer);           //ГЋГІГЇГ°Г ГўГЄГ  Г±ГІГ°Г®ГЄГЁ Гў RS232
               transmitString(textBuffer);
               /*
                 New Line ending
               */
 
-              Delay_ms(1000);                       //Задержка 1 сек.
+              Delay_ms(1000);                       //Г‡Г Г¤ГҐГ°Г¦ГЄГ  1 Г±ГҐГЄ.
 }
 
  void FillBrightness(int limit) {
@@ -695,11 +693,11 @@ void drawVLine(int column) {
 
 void main() {
      char textBuffer[15];
-     int adc_result, x, y; // Результат АЦП - число
+     int adc_result, x, y; // ГђГҐГ§ГіГ«ГјГІГ ГІ ГЂГ–ГЏ - Г·ГЁГ±Г«Г®
      int flag = 0;
 
-     initSPI(); //Инициализация SPI
-     rs232init(); // Инициализация RS232
+     initSPI(); //Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї SPI
+     rs232init(); // Г€Г­ГЁГ¶ГЁГ Г«ГЁГ§Г Г¶ГЁГї RS232
 
      CS = 1;
      Delay_us(1);
@@ -711,18 +709,43 @@ void main() {
      adc_result = 4000;
      drawVLine(100);
      while(1) {
+<<<<<<< HEAD
 
                     *adc_data = adc_get_data(1);
+=======
+//              if (flag == 0) {
+                     /*
+                      ГЏГ®Г«ГіГ·ГҐГ­ГЁГҐ 3 ГЎГЁГІ, ГЄГ ГЄ Г°ГҐГ§ГіГ«ГјГІГ ГІ Г°Г ГЎГ®ГІГ» ГЂГ–ГЏ
+                    */
+                    *adc_data = adc_get_data(0);
+                    /*
+                      Г‡Г ГЇГЁГ±Гј ГЎГЁГІ, Г­ГҐГ±ГіГ№ГЁГµ ГЇГ®Г«ГҐГ§Г­ГіГѕ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Гў Г®Г¤Г­Г® Г·ГЁГ±Г«Г®
+                    */
+>>>>>>> 6b324bfa55aa50e21c2b9e01f590742e4ba1fe78
                     adc_result = parseADCValue(adc_data);
 
                     strConstCpy(textBuffer, RESULT_STR);
                     transmitString(textBuffer);
 
+<<<<<<< HEAD
                     IntToStr(adc_result, textBuffer);
                     transmitString(textBuffer);
 
                     strConstCpy(textBuffer, CRLF);
                     transmitString(textBuffer);
+=======
+                    IntToStr(adc_result, textBuffer);       //ГђГҐГ§ГіГ«ГјГІГ ГІ ГЂГ–ГЏ ГЄ Г±ГІГ°Г®ГЄГ®ГўГ®Г¬Гі ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГѕ
+                    transmitString(textBuffer);             //ГЏГҐГ°ГҐГ¤Г Г·Г  Гў RS232
+
+                    /*
+                      New line
+                    */
+                    strConstCpy(textBuffer, CRLF);        //"\r\n"
+                    transmitString(textBuffer);           //ГЋГІГЇГ°Г ГўГЄГ  Г±ГІГ°Г®ГЄГЁ Гў RS232
+                    /*
+                      New Line ending
+                    */
+>>>>>>> 6b324bfa55aa50e21c2b9e01f590742e4ba1fe78
 
                     y = 64 - adc_result / LCD_Y_LIMIT;
                     y = y - 1;
