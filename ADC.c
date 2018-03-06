@@ -7,7 +7,7 @@
  * permission of Hlib Nekrasov
  *******************************************************/
 
-
+ sbit CS at P2_0_bit;
 //WARNING: This Font Require X-GLCD Lib.
 //         You can not use it with MikroE GLCD Lib.
 
@@ -30,55 +30,10 @@ const unsigned short Calibri6x7[] = {
         0x00, 0x36, 0x49, 0x49, 0x49, 0x36, 0x00,  // Code for char 8
         0x00, 0x00, 0x4E, 0x49, 0x49, 0x3E, 0x00   // Code for char 9
         };
-
-unsigned char const num0[] = {
-          0x05, 0xFE, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0xFE, 0x00
-};
-
-unsigned char const num1[] = {
-         0x05, 0x02, 0x01, 0x02, 0x01, 0xFF, 0x01, 0x00, 0x01, 0x00, 0x01
-};
-
-unsigned char const num2[] = {
-         0x05, 0x82, 0x01, 0x41, 0x01, 0x21, 0x01, 0x11, 0x01, 0x0E, 0x01
-};
-
-unsigned char const num3[] = {
-         0x05, 0x82, 0x00, 0x01, 0x01, 0x11, 0x01, 0x11, 0x01, 0xEE, 0x00
-};
-
-unsigned char const num4[] = {
-         0x05, 0x60, 0x00, 0x58, 0x00, 0x46, 0x01, 0xFF, 0x01, 0x40, 0x01
-};
-
-unsigned char const num5[] = {
-         0x05, 0x9F, 0x00, 0x11, 0x01, 0x11, 0x01, 0x11, 0x01, 0xE1, 0x00
-};
-
-unsigned char const num6[] = {
-         0x05, 0xFC, 0x00, 0x12, 0x01, 0x11, 0x01, 0x11, 0x01, 0xE0, 0x00
-};
-
-unsigned char const num7[] = {
-         0x05, 0x03, 0x00, 0x81, 0x01, 0x61, 0x00, 0x19, 0x00, 0x07, 0x00
-};
-
-unsigned char const num8[] = {
-         0x05, 0xEE, 0x00, 0x11, 0x01, 0x11, 0x01, 0x11, 0x01, 0xEE, 0x00
-};
-
-unsigned char const num9[] = {
-         0x05, 0x0E, 0x00, 0x11, 0x01, 0x11, 0x01, 0x91, 0x00, 0x7E, 0x00
-};
-
-/*const int num9[] = {0b00000000,  //9
-                     0b01110100,
-                     0b01010100,
-                     0b01010100,
-                     0b01010100,
-                     0b01010100,
-                     0b00000000,
-                     0b00000000};  */
+        
+const unsigned short comma[] = {
+        0x40, 0x30, 0x00, 0x00, 0x00,
+        };
 
 const char *ch0 = "channel 0";
 const char *ch1 = "channel 1";
@@ -91,7 +46,13 @@ const int LCD_X_LIMIT = 128;
 const int LCD_Y_LIMIT = 64;
 const float VREF = 4.096;
 
-sbit CS at P2_0_bit;
+struct rcv_data {
+       short first;
+       short second;
+       short third;
+} *adc_data;
+
+
 
 //Установка битов для GLCD экрана
 sbit LCD_CS1B at P2_2_bit;
@@ -153,32 +114,6 @@ void writeData(char _data) {
     LCD_EN = 1;
 }
 
-int readData(int x, int y) {
-    int buf = 0;
-    int _cs = x / 64;
-    LCD_EN = 0;
-    LCD_RS = 1;
-    LCD_RW = 1;
-
-    setXAddress(y/8);
-    setZAddress(0);
-
-     if (_cs == 0 ) {
-        LCD_CS1B = 0;
-        LCD_CS2B = 1;
-        setYAddress(x);
-     } else {
-        LCD_CS1B = 1;
-        LCD_CS2B = 0;
-        setYAddress(64 + (x % 64));
-     }
-
-    LCD_EN = 1;
-    buf = P0;
-    LCD_EN = 0;
-    return buf;
-}
-
 void displayOn() {
     LCD_EN = 1;
     LCD_RS = 0;
@@ -218,12 +153,11 @@ void drawPoint(int x, int y, int flag) {
          mask = mask << 1;
      }
      writeData(mask);
+     Delay_ms(1000);
      LCD_EN = 0;
 }
 
 void drawMask(int x, int y, int mask) {
-     int count = 0;
-     int limit = 0;
      int _cs = x / 64;
      setXAddress(y/8);
 
@@ -264,45 +198,23 @@ void drawVLine(int column) {
      LCD_EN = 0;
 }
 
-void resetPoint(int x, int y) {
-     int mask = 0b00000000;
-     int _cs = x / 64;
-     setXAddress(y/8);
-
-     if (_cs == 0 ) {
-        LCD_CS1B = 0;
-        LCD_CS2B = 1;
-        setYAddress(x);
-     } else {
-        LCD_CS1B = 1;
-        LCD_CS2B = 0;
-        setYAddress(x % 64);
-     }
-     setZAddress(0);
-     writeData(mask);
-     LCD_EN = 0;
-}
-
 int clear(int limit_left, int limit_right) {
      int x,y;
      if (limit_left >= limit_right) return -1;
 
      for(x = limit_left; x < limit_right; x++) {
            for(y = 0; y <=64; y=y+8) {
-                  drawPoint(x, y, 1);
+//                  drawPoint(x, y, 1);
+                    drawMask(x,y, 0b00000000);
            }
      }
      return 0;
 }
 
-struct rcv_data {
-       short first;
-       short second;
-       short third;
-} *adc_data;
+
 
 void initSPI() {
-     SPCR = 0b01010001;
+     SPCR = 0b01010011;
 }
 
 void rs232init() {
@@ -428,14 +340,74 @@ void strConstCpy(char *dest, const char *source) {
      *dest = 0 ;
 }
 
-void drawHighValue(int number) {
+// reverses a string 'str' of length 'len'
+void reverse(char *str, int len)
+{
+    int i=0, j=len-1, temp;
+    while (i<j)
+    {
+        temp = str[i];
+        str[i] = str[j];
+        str[j] = temp;
+        i++; j--;
+    }
+}
+
+ // Converts a given integer x to string str[].  d is the number
+ // of digits required in output. If d is more than the number
+ // of digits in x, then 0s are added at the beginning.
+int intToStr(int x, char str[], int d)
+{
+    int i = 0;
+    while (x)
+    {
+        str[i++] = (x%10) + '0';
+        x = x/10;
+    }
+
+    // If number of digits required is more, then
+    // add 0s at the beginning
+    while (i < d)
+        str[i++] = '0';
+
+    reverse(str, i);
+    str[i] = '\0';
+    return i;
+}
+
+// Converts a floating point number to string.
+void ftoa(float n, char *res, int afterpoint)
+{
+    // Extract integer part
+    int ipart = (int)n;
+
+    // Extract floating part
+    float fpart = n - (float)ipart;
+
+    // convert integer part to string
+    int i = intToStr(ipart, res, 0);
+
+    // check for display option after point
+    if (afterpoint != 0)
+    {
+        res[i] = '.';  // add dot
+
+        // Get the value of fraction part upto given no.
+        // of points after dot. The third parameter is needed
+        // to handle cases like 233.007
+        fpart = fpart * pow(10, afterpoint);
+
+        intToStr((int)fpart, res + i + 1, afterpoint);
+    }
+}
+
+void drawHighValue(float number) {
      int i, x;
      char numBuffer[10];
      char *p;
-     IntToStr(number, numBuffer);
      
-     //transmitString(numBuffer);
-     
+     ftoa(number, numBuffer, 2);
+
      p = &numBuffer[0];
      x = 95;
      while (*p) {
@@ -491,8 +463,14 @@ void drawHighValue(int number) {
                           drawMask(x, 8, Calibri6x7[7 * 0 + i]);
                           x = x + 1;
                    }
+            } else if (*p == '.') {
+                   for(i = 0; i < 5; i++) {
+                          drawMask(x, 8, comma[i]);
+                          x = x + 1;
+                   }
             }
-            transmit(*(p++));
+            (*(p++));
+
      }
 }
 
@@ -503,29 +481,61 @@ void clearHighValue() {
 
        }
 }
-//                 1,10,1,4
-void drawLine(int x0, int x1, int y0, int y1) {
-     int deltax, deltay, error, deltaerr, y, diry, x;
-     deltax = abs(x1 - x0); //9
-     deltay = abs(y1 - y0); //3
-     error = 0;
-     deltaerr = deltay;     //3
-     y = y0;                //1
-     diry = y1 - y0;        //3
-     if (diry > 0)
-         diry = 1;          //1
-     if (diry < 0)
-         diry = -1;
-     for (x = x0; x < x1; x++) {//ot 1 do 10
-         drawPoint(x, y, 0);     //       1,1 | 2,1 |
-         Delay_ms(1000);
-         error = error + deltaerr;     //  3  |  6  |
-         if (2 * error >= deltax) {    //  -  |  +  |
-             y = y + diry;            //     |
-             error = error - deltax;   //     |
-         }
-     }
 
+int Abs(int num) {
+	if(num < 0)
+		return -num;
+	else
+		return num;
+}
+
+void Brezenhem(int x0, int y0, int x1, int y1)
+{
+     int A, B, sign, signa, signb;
+     int x, y;
+     int f = 0;
+     A = y1 - y0;
+     B = x0 - x1;
+     if (abs(A) > abs(B))
+	sign = 1;
+     else
+	sign = -1;
+     if (A < 0)
+	  signa = -1;
+     else
+	  signa = 1;
+     if (B < 0)
+	  signb = -1;
+     else
+	  signb = 1;
+     drawPoint(x0,y0, 0);
+     x = x0;
+     y = y0;
+     if (sign == -1)
+     {
+      do {
+         f += A*signa;
+         if (f > 0)
+         {
+            f -= B*signb;
+            y += signa;
+         }
+         x -= signb;
+         drawPoint(x, y, 0);
+    } while (x != x1 || y != y1);
+  }
+  else
+  {
+    do {
+      f += B*signb;
+      if (f > 0) {
+        f -= A*signa;
+        x -= signb;
+      }
+      y += signa;
+      drawPoint(x, y, 0);
+    } while (x != x1 || y != y1);
+  }
 }
 
 void main() {
@@ -533,7 +543,13 @@ void main() {
      int adc_result;
      int y = 0;
      int x = 0;
-     float f = 0;
+     float inputValue = 0;
+     float k = 0;
+     int prevx;
+     int prevy;
+     
+     prevx=0;
+     prevy=0;
 
      initSPI();
      rs232init();
@@ -544,30 +560,43 @@ void main() {
      //LCD
      displayOn();
      clear(0, 128);
-     //adc_result = 4000;
-     //drawVLine(92);
-     
-     drawPoint(1, 1,0);
-     
-     drawPoint(10, 10,0);
-     
-     drawLine(1,10,1,11);
-
+     drawVLine(92);
 
      while(1) {
+     drawPoint(1,1,0);
+     drawPoint(1,40,0);
+              Brezenhem(1, 1, 1, 40);
+//              Brezenhem(10, 15, 17, 25);
               /**adc_data = adc_get_data(0);
               adc_result = parseADCValue(adc_data);
-              //clear(93, 128);
-              clearHighValue();
-              drawHighValue(adc_result);
-
+              inputValue = getInputValue(adc_result);
+              
               y = 64 - adc_result / LCD_Y_LIMIT;
               y = y - 1;
-              drawPoint(x, y, 0);
+              if(x == 0) {
+                   prevx = x;
+                   prevy = y;
+              } else if (x > 0) {
+                    Brezenhem(prevx, prevy, x, y);
+                    prevx = x;
+                    prevy = y;
+              }
+              //drawPoint(x, y, 0);
               x = x + 1;
               if (x == 92) {
                     x = 0;
                     clear(0, 92);
-              }*/
+              }
+              
+              *adc_data = adc_get_data(1);
+              adc_result = parseADCValue(adc_data);
+              k = getGain(adc_result);
+              k = inputValue * k;
+              
+              clear(93, 128);
+              clearHighValue();
+              drawHighValue(k); */
+
+
      }
 }
