@@ -30,7 +30,7 @@ const unsigned short Calibri6x7[] = {
         0x00, 0x36, 0x49, 0x49, 0x49, 0x36, 0x00,  // Code for char 8
         0x00, 0x00, 0x4E, 0x49, 0x49, 0x3E, 0x00   // Code for char 9
         };
-        
+
 const unsigned short comma[] = {
         0x40, 0x30, 0x00, 0x00, 0x00,
         };
@@ -54,7 +54,7 @@ struct rcv_data {
 
 
 
-//Установка битов для GLCD экрана
+//????????? ????? ??? GLCD ??????
 sbit LCD_CS1B at P2_2_bit;
 sbit LCD_CS2B at P2_3_bit;
 sbit LCD_RS   at P2_4_bit;
@@ -153,7 +153,7 @@ void drawPoint(int x, int y, int flag) {
          mask = mask << 1;
      }
      writeData(mask);
-     Delay_ms(1000);
+     //Delay_ms(1000);
      LCD_EN = 0;
 }
 
@@ -309,7 +309,7 @@ int parseADCValue(struct rcv_data *adc_data) {
         result <<= 1;
         result += getBit(i, adc_data->third);
     }
-    
+
     return result;
 }
 
@@ -320,7 +320,7 @@ float getInputValue(int _data) {
 float getGain(int _data) {
       return 2. * (_data / 1000.);
 }
- 
+
 /*
   Most of the Microcontrolleres having limited RAM, For Avoiding the Errors Not Enough RAM and Strings problem (const truncated) .
   You have to move the strings to ROM (FLASH program) memory, and there by save RAM.
@@ -405,7 +405,7 @@ void drawHighValue(float number) {
      int i, x;
      char numBuffer[10];
      char *p;
-     
+
      ftoa(number, numBuffer, 2);
 
      p = &numBuffer[0];
@@ -547,7 +547,7 @@ void main() {
      float k = 0;
      int prevx;
      int prevy;
-     
+
      prevx=0;
      prevy=0;
 
@@ -565,12 +565,12 @@ void main() {
      while(1) {
      drawPoint(1,1,0);
      drawPoint(1,40,0);
-              Brezenhem(1, 1, 1, 40);
+//              Brezenhem(1, 1, 1, 40);
 //              Brezenhem(10, 15, 17, 25);
-              /**adc_data = adc_get_data(0);
+              *adc_data = adc_get_data(0);
               adc_result = parseADCValue(adc_data);
               inputValue = getInputValue(adc_result);
-              
+
               y = 64 - adc_result / LCD_Y_LIMIT;
               y = y - 1;
               if(x == 0) {
@@ -587,15 +587,15 @@ void main() {
                     x = 0;
                     clear(0, 92);
               }
-              
+
               *adc_data = adc_get_data(1);
               adc_result = parseADCValue(adc_data);
               k = getGain(adc_result);
               k = inputValue * k;
-              
+
               clear(93, 128);
               clearHighValue();
-              drawHighValue(k); */
+              drawHighValue(k);
 
 
      }
