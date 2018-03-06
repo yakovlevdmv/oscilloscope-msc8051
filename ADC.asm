@@ -100,15 +100,15 @@ _readData:
 	MOV A, FARG_readData_x+1
 	MOV readData__cs_L0+0, FARG_readData_x+0
 	INC R0
-	SJMP L__readData109
-L__readData110:
+	SJMP L__readData113
+L__readData114:
 	MOV C, #231
 	RRC A
 	XCH A, readData__cs_L0+0
 	RRC A
 	XCH A, readData__cs_L0+0
-L__readData109:
-	DJNZ R0, L__readData110
+L__readData113:
+	DJNZ R0, L__readData114
 	MOV readData__cs_L0+1, A
 ;ADC.c,159 :: 		LCD_EN = 0;
 	CLR P2_6_bit+0
@@ -121,15 +121,15 @@ L__readData109:
 	MOV A, FARG_readData_y+1
 	MOV FARG_setXAddress_x+0, FARG_readData_y+0
 	INC R0
-	SJMP L__readData111
-L__readData112:
+	SJMP L__readData115
+L__readData116:
 	MOV C, #231
 	RRC A
 	XCH A, FARG_setXAddress_x+0
 	RRC A
 	XCH A, FARG_setXAddress_x+0
-L__readData111:
-	DJNZ R0, L__readData112
+L__readData115:
+	DJNZ R0, L__readData116
 	MOV FARG_setXAddress_x+1, A
 	LCALL _setXAddress+0
 ;ADC.c,164 :: 		setZAddress(0);
@@ -221,23 +221,23 @@ _drawPoint:
 	MOV A, FARG_drawPoint_x+1
 	MOV drawPoint__cs_L0+0, FARG_drawPoint_x+0
 	INC R0
-	SJMP L__drawPoint113
-L__drawPoint114:
+	SJMP L__drawPoint117
+L__drawPoint118:
 	MOV C, #231
 	RRC A
 	XCH A, drawPoint__cs_L0+0
 	RRC A
 	XCH A, drawPoint__cs_L0+0
-L__drawPoint113:
-	DJNZ R0, L__drawPoint114
+L__drawPoint117:
+	DJNZ R0, L__drawPoint118
 	MOV drawPoint__cs_L0+1, A
 ;ADC.c,198 :: 		if (flag == 1) {
 	MOV A, #1
 	XRL A, FARG_drawPoint_flag+0
-	JNZ L__drawPoint115
+	JNZ L__drawPoint119
 	MOV A, #0
 	XRL A, FARG_drawPoint_flag+1
-L__drawPoint115:
+L__drawPoint119:
 	JNZ L_drawPoint2
 ;ADC.c,199 :: 		mask = 0b00000000;
 	MOV drawPoint_mask_L0+0, #0
@@ -249,15 +249,15 @@ L_drawPoint2:
 	MOV A, FARG_drawPoint_y+1
 	MOV FARG_setXAddress_x+0, FARG_drawPoint_y+0
 	INC R0
-	SJMP L__drawPoint116
-L__drawPoint117:
+	SJMP L__drawPoint120
+L__drawPoint121:
 	MOV C, #231
 	RRC A
 	XCH A, FARG_setXAddress_x+0
 	RRC A
 	XCH A, FARG_setXAddress_x+0
-L__drawPoint116:
-	DJNZ R0, L__drawPoint117
+L__drawPoint120:
+	DJNZ R0, L__drawPoint121
 	MOV FARG_setXAddress_x+1, A
 	LCALL _setXAddress+0
 ;ADC.c,203 :: 		if (_cs == 0 ) {
@@ -331,15 +331,15 @@ L_drawPoint5:
 	MOV R0, #1
 	MOV A, drawPoint_mask_L0+0
 	INC R0
-	SJMP L__drawPoint118
-L__drawPoint119:
+	SJMP L__drawPoint122
+L__drawPoint123:
 	CLR C
 	RLC A
 	XCH A, drawPoint_mask_L0+1
 	RLC A
 	XCH A, drawPoint_mask_L0+1
-L__drawPoint118:
-	DJNZ R0, L__drawPoint119
+L__drawPoint122:
+	DJNZ R0, L__drawPoint123
 	MOV drawPoint_mask_L0+0, A
 ;ADC.c,214 :: 		for (count = 0; count < limit - 1; count++) {
 	MOV A, #1
@@ -366,15 +366,15 @@ L_drawPoint6:
 	MOV R0, #1
 	MOV A, drawPoint_mask_L0+0
 	INC R0
-	SJMP L__drawPoint120
-L__drawPoint121:
+	SJMP L__drawPoint124
+L__drawPoint125:
 	CLR C
 	RLC A
 	XCH A, drawPoint_mask_L0+1
 	RLC A
 	XCH A, drawPoint_mask_L0+1
-L__drawPoint120:
-	DJNZ R0, L__drawPoint121
+L__drawPoint124:
+	DJNZ R0, L__drawPoint125
 	MOV drawPoint_mask_L0+0, A
 ;ADC.c,219 :: 		}
 L_drawPoint8:
@@ -396,30 +396,30 @@ _drawMask:
 	MOV A, FARG_drawMask_x+1
 	MOV drawMask__cs_L0+0, FARG_drawMask_x+0
 	INC R0
-	SJMP L__drawMask122
-L__drawMask123:
+	SJMP L__drawMask126
+L__drawMask127:
 	MOV C, #231
 	RRC A
 	XCH A, drawMask__cs_L0+0
 	RRC A
 	XCH A, drawMask__cs_L0+0
-L__drawMask122:
-	DJNZ R0, L__drawMask123
+L__drawMask126:
+	DJNZ R0, L__drawMask127
 	MOV drawMask__cs_L0+1, A
 ;ADC.c,228 :: 		setXAddress(y/8);
 	MOV R0, #3
 	MOV A, FARG_drawMask_y+1
 	MOV FARG_setXAddress_x+0, FARG_drawMask_y+0
 	INC R0
-	SJMP L__drawMask124
-L__drawMask125:
+	SJMP L__drawMask128
+L__drawMask129:
 	MOV C, #231
 	RRC A
 	XCH A, FARG_setXAddress_x+0
 	RRC A
 	XCH A, FARG_setXAddress_x+0
-L__drawMask124:
-	DJNZ R0, L__drawMask125
+L__drawMask128:
+	DJNZ R0, L__drawMask129
 	MOV FARG_setXAddress_x+1, A
 	LCALL _setXAddress+0
 ;ADC.c,230 :: 		if (_cs == 0 ) {
@@ -480,15 +480,15 @@ _drawVLine:
 	MOV A, FARG_drawVLine_column+1
 	MOV drawVLine__cs_L0+0, FARG_drawVLine_column+0
 	INC R0
-	SJMP L__drawVLine126
-L__drawVLine127:
+	SJMP L__drawVLine130
+L__drawVLine131:
 	MOV C, #231
 	RRC A
 	XCH A, drawVLine__cs_L0+0
 	RRC A
 	XCH A, drawVLine__cs_L0+0
-L__drawVLine126:
-	DJNZ R0, L__drawVLine127
+L__drawVLine130:
+	DJNZ R0, L__drawVLine131
 	MOV drawVLine__cs_L0+1, A
 ;ADC.c,249 :: 		for(count = 0; count < 8; count++) {
 	MOV drawVLine_count_L0+0, #0
@@ -573,30 +573,30 @@ _resetPoint:
 	MOV A, FARG_resetPoint_x+1
 	MOV resetPoint__cs_L0+0, FARG_resetPoint_x+0
 	INC R0
-	SJMP L__resetPoint128
-L__resetPoint129:
+	SJMP L__resetPoint132
+L__resetPoint133:
 	MOV C, #231
 	RRC A
 	XCH A, resetPoint__cs_L0+0
 	RRC A
 	XCH A, resetPoint__cs_L0+0
-L__resetPoint128:
-	DJNZ R0, L__resetPoint129
+L__resetPoint132:
+	DJNZ R0, L__resetPoint133
 	MOV resetPoint__cs_L0+1, A
 ;ADC.c,270 :: 		setXAddress(y/8);
 	MOV R0, #3
 	MOV A, FARG_resetPoint_y+1
 	MOV FARG_setXAddress_x+0, FARG_resetPoint_y+0
 	INC R0
-	SJMP L__resetPoint130
-L__resetPoint131:
+	SJMP L__resetPoint134
+L__resetPoint135:
 	MOV C, #231
 	RRC A
 	XCH A, FARG_setXAddress_x+0
 	RRC A
 	XCH A, FARG_setXAddress_x+0
-L__resetPoint130:
-	DJNZ R0, L__resetPoint131
+L__resetPoint134:
+	DJNZ R0, L__resetPoint135
 	MOV FARG_setXAddress_x+1, A
 	LCALL _setXAddress+0
 ;ADC.c,272 :: 		if (_cs == 0 ) {
@@ -675,7 +675,7 @@ L_clear19:
 	XRL A, #128
 	SUBB A, R0
 	JNC L_clear20
-;ADC.c,291 :: 		for(y = 0; y <=64; y++) {
+;ADC.c,291 :: 		for(y = 0; y <=64; y=y+8) {
 	MOV clear_y_L0+0, #0
 	MOV clear_y_L0+1, #0
 L_clear22:
@@ -697,8 +697,8 @@ L_clear22:
 	MOV FARG_drawPoint_flag+0, #1
 	MOV FARG_drawPoint_flag+1, #0
 	LCALL _drawPoint+0
-;ADC.c,291 :: 		for(y = 0; y <=64; y++) {
-	MOV A, #1
+;ADC.c,291 :: 		for(y = 0; y <=64; y=y+8) {
+	MOV A, #8
 	ADD A, clear_y_L0+0
 	MOV clear_y_L0+0, A
 	MOV A, #0
@@ -839,10 +839,10 @@ _adc_get_data:
 L_adc_get_data29:
 	MOV A, #1
 	XRL A, FARG_adc_get_data_channel+0
-	JNZ L__adc_get_data132
+	JNZ L__adc_get_data136
 	MOV A, #0
 	XRL A, FARG_adc_get_data_channel+1
-L__adc_get_data132:
+L__adc_get_data136:
 	JNZ L_adc_get_data31
 ;ADC.c,354 :: 		SPI_init_data += 0b00001000;
 	MOV A, #8
@@ -856,10 +856,10 @@ L__adc_get_data132:
 L_adc_get_data31:
 	MOV A, #2
 	XRL A, FARG_adc_get_data_channel+0
-	JNZ L__adc_get_data133
+	JNZ L__adc_get_data137
 	MOV A, #0
 	XRL A, FARG_adc_get_data_channel+1
-L__adc_get_data133:
+L__adc_get_data137:
 	JNZ L_adc_get_data33
 ;ADC.c,356 :: 		SPI_init_data += 0b00010000;
 	MOV A, #16
@@ -873,10 +873,10 @@ L__adc_get_data133:
 L_adc_get_data33:
 	MOV A, #3
 	XRL A, FARG_adc_get_data_channel+0
-	JNZ L__adc_get_data134
+	JNZ L__adc_get_data138
 	MOV A, #0
 	XRL A, FARG_adc_get_data_channel+1
-L__adc_get_data134:
+L__adc_get_data138:
 	JNZ L_adc_get_data35
 ;ADC.c,358 :: 		SPI_init_data += 0b00011000;
 	MOV A, #24
@@ -970,15 +970,15 @@ _getBit:
 	MOV A, FARG_getBit_byte+1
 	MOV R0, FARG_getBit_byte+0
 	INC R2
-	SJMP L__getBit135
-L__getBit136:
+	SJMP L__getBit139
+L__getBit140:
 	MOV C, #231
 	RRC A
 	XCH A, R0
 	RRC A
 	XCH A, R0
-L__getBit135:
-	DJNZ R2, L__getBit136
+L__getBit139:
+	DJNZ R2, L__getBit140
 	MOV R1, A
 	ANL 0, #1
 	ANL 1, #0
@@ -1030,15 +1030,15 @@ L_parseADCValue43:
 	MOV R0, #1
 	MOV A, parseADCValue_result_L0+0
 	INC R0
-	SJMP L__parseADCValue137
-L__parseADCValue138:
+	SJMP L__parseADCValue141
+L__parseADCValue142:
 	CLR C
 	RLC A
 	XCH A, parseADCValue_result_L0+1
 	RLC A
 	XCH A, parseADCValue_result_L0+1
-L__parseADCValue137:
-	DJNZ R0, L__parseADCValue138
+L__parseADCValue141:
+	DJNZ R0, L__parseADCValue142
 	MOV parseADCValue_result_L0+0, A
 ;ADC.c,393 :: 		result += getBit(i, adc_data->second);
 	MOV FARG_getBit_position+0, parseADCValue_i_L0+0
@@ -1088,15 +1088,15 @@ L_parseADCValue46:
 	MOV R0, #1
 	MOV A, parseADCValue_result_L0+0
 	INC R0
-	SJMP L__parseADCValue139
-L__parseADCValue140:
+	SJMP L__parseADCValue143
+L__parseADCValue144:
 	CLR C
 	RLC A
 	XCH A, parseADCValue_result_L0+1
 	RLC A
 	XCH A, parseADCValue_result_L0+1
-L__parseADCValue139:
-	DJNZ R0, L__parseADCValue140
+L__parseADCValue143:
+	DJNZ R0, L__parseADCValue144
 	MOV parseADCValue_result_L0+0, A
 ;ADC.c,398 :: 		result += getBit(i, adc_data->third);
 	MOV FARG_getBit_position+0, parseADCValue_i_L0+0
@@ -1931,141 +1931,224 @@ L_clearHighValue103:
 	RET
 ; end of _clearHighValue
 
+_drawLine:
+;ADC.c,507 :: 		void drawLine(int x0, int x1, int y0, int y1) {
+;ADC.c,509 :: 		deltax = abs(x1 - x0); //9
+	CLR C
+	MOV A, FARG_drawLine_x1+0
+	SUBB A, FARG_drawLine_x0+0
+	MOV FARG_abs_a+0, A
+	MOV A, FARG_drawLine_x1+1
+	SUBB A, FARG_drawLine_x0+1
+	MOV FARG_abs_a+1, A
+	LCALL _abs+0
+	MOV drawLine_deltax_L0+0, 0
+	MOV drawLine_deltax_L0+1, 1
+;ADC.c,510 :: 		deltay = abs(y1 - y0); //3
+	CLR C
+	MOV A, FARG_drawLine_y1+0
+	SUBB A, FARG_drawLine_y0+0
+	MOV FARG_abs_a+0, A
+	MOV A, FARG_drawLine_y1+1
+	SUBB A, FARG_drawLine_y0+1
+	MOV FARG_abs_a+1, A
+	LCALL _abs+0
+;ADC.c,511 :: 		error = 0;
+	MOV drawLine_error_L0+0, #0
+	MOV drawLine_error_L0+1, #0
+;ADC.c,512 :: 		deltaerr = deltay;     //3
+	MOV drawLine_deltaerr_L0+0, 0
+	MOV drawLine_deltaerr_L0+1, 1
+;ADC.c,513 :: 		y = y0;                //1
+	MOV drawLine_y_L0+0, FARG_drawLine_y0+0
+	MOV drawLine_y_L0+1, FARG_drawLine_y0+1
+;ADC.c,514 :: 		diry = y1 - y0;        //3
+	CLR C
+	MOV A, FARG_drawLine_y1+0
+	SUBB A, FARG_drawLine_y0+0
+	MOV R1, A
+	MOV A, FARG_drawLine_y1+1
+	SUBB A, FARG_drawLine_y0+1
+	MOV R2, A
+	MOV drawLine_diry_L0+0, 1
+	MOV drawLine_diry_L0+1, 2
+;ADC.c,515 :: 		if (diry > 0)
+	SETB C
+	MOV A, R1
+	SUBB A, #0
+	MOV A, #0
+	XRL A, #128
+	MOV R0, A
+	MOV A, R2
+	XRL A, #128
+	SUBB A, R0
+	JC L_drawLine105
+;ADC.c,516 :: 		diry = 1;          //1
+	MOV drawLine_diry_L0+0, #1
+	MOV drawLine_diry_L0+1, #0
+L_drawLine105:
+;ADC.c,517 :: 		if (diry < 0)
+	CLR C
+	MOV A, drawLine_diry_L0+0
+	SUBB A, #0
+	MOV A, #0
+	XRL A, #128
+	MOV R0, A
+	MOV A, drawLine_diry_L0+1
+	XRL A, #128
+	SUBB A, R0
+	JNC L_drawLine106
+;ADC.c,518 :: 		diry = -1;
+	MOV drawLine_diry_L0+0, #255
+	MOV drawLine_diry_L0+1, #255
+L_drawLine106:
+;ADC.c,519 :: 		for (x = x0; x < x1; x++) {//ot 1 do 10
+	MOV drawLine_x_L0+0, FARG_drawLine_x0+0
+	MOV drawLine_x_L0+1, FARG_drawLine_x0+1
+L_drawLine107:
+	CLR C
+	MOV A, drawLine_x_L0+0
+	SUBB A, FARG_drawLine_x1+0
+	MOV A, FARG_drawLine_x1+1
+	XRL A, #128
+	MOV R0, A
+	MOV A, drawLine_x_L0+1
+	XRL A, #128
+	SUBB A, R0
+	JC #3
+	LJMP L_drawLine108
+;ADC.c,520 :: 		drawPoint(x, y, 0);     //       1,1 | 2,1 |
+	MOV FARG_drawPoint_x+0, drawLine_x_L0+0
+	MOV FARG_drawPoint_x+1, drawLine_x_L0+1
+	MOV FARG_drawPoint_y+0, drawLine_y_L0+0
+	MOV FARG_drawPoint_y+1, drawLine_y_L0+1
+	MOV FARG_drawPoint_flag+0, #0
+	MOV FARG_drawPoint_flag+1, #0
+	LCALL _drawPoint+0
+;ADC.c,521 :: 		Delay_ms(1000);
+	MOV R5, 7
+	MOV R6, 86
+	MOV R7, 60
+	DJNZ R7, 
+	DJNZ R6, 
+	DJNZ R5, 
+;ADC.c,522 :: 		error = error + deltaerr;     //  3  |  6  |
+	MOV A, drawLine_error_L0+0
+	ADD A, drawLine_deltaerr_L0+0
+	MOV R3, A
+	MOV A, drawLine_error_L0+1
+	ADDC A, drawLine_deltaerr_L0+1
+	MOV R4, A
+	MOV drawLine_error_L0+0, 3
+	MOV drawLine_error_L0+1, 4
+;ADC.c,523 :: 		if (2 * error >= deltax) {    //  -  |  +  |
+	MOV R0, #1
+	MOV R2, 4
+	MOV A, R3
+	INC R0
+	SJMP L__drawLine145
+L__drawLine146:
+	CLR C
+	RLC A
+	XCH A, R2
+	RLC A
+	XCH A, R2
+L__drawLine145:
+	DJNZ R0, L__drawLine146
+	MOV R1, A
+	CLR C
+	MOV A, R1
+	SUBB A, drawLine_deltax_L0+0
+	MOV A, drawLine_deltax_L0+1
+	XRL A, #128
+	MOV R0, A
+	MOV A, R2
+	XRL A, #128
+	SUBB A, R0
+	JC L_drawLine110
+;ADC.c,524 :: 		y = y + diry;            //     |
+	MOV A, drawLine_y_L0+0
+	ADD A, drawLine_diry_L0+0
+	MOV drawLine_y_L0+0, A
+	MOV A, drawLine_y_L0+1
+	ADDC A, drawLine_diry_L0+1
+	MOV drawLine_y_L0+1, A
+;ADC.c,525 :: 		error = error - deltax;   //     |
+	CLR C
+	MOV A, drawLine_error_L0+0
+	SUBB A, drawLine_deltax_L0+0
+	MOV drawLine_error_L0+0, A
+	MOV A, drawLine_error_L0+1
+	SUBB A, drawLine_deltax_L0+1
+	MOV drawLine_error_L0+1, A
+;ADC.c,526 :: 		}
+L_drawLine110:
+;ADC.c,519 :: 		for (x = x0; x < x1; x++) {//ot 1 do 10
+	MOV A, #1
+	ADD A, drawLine_x_L0+0
+	MOV drawLine_x_L0+0, A
+	MOV A, #0
+	ADDC A, drawLine_x_L0+1
+	MOV drawLine_x_L0+1, A
+;ADC.c,527 :: 		}
+	LJMP L_drawLine107
+L_drawLine108:
+;ADC.c,529 :: 		}
+	RET
+; end of _drawLine
+
 _main:
 	MOV SP+0, #128
-;ADC.c,507 :: 		void main() {
-;ADC.c,510 :: 		int y = 0;
-;ADC.c,511 :: 		int x = 0;
-	MOV main_x_L0+0, #0
-	MOV main_x_L0+1, #0
-;ADC.c,512 :: 		float f = 0;
-;ADC.c,514 :: 		initSPI();
+;ADC.c,531 :: 		void main() {
+;ADC.c,534 :: 		int y = 0;
+;ADC.c,535 :: 		int x = 0;
+;ADC.c,536 :: 		float f = 0;
+;ADC.c,538 :: 		initSPI();
 	LCALL _initSPI+0
-;ADC.c,515 :: 		rs232init();
+;ADC.c,539 :: 		rs232init();
 	LCALL _rs232init+0
-;ADC.c,517 :: 		CS = 1;
+;ADC.c,541 :: 		CS = 1;
 	SETB P2_0_bit+0
-;ADC.c,518 :: 		Delay_us(1);
+;ADC.c,542 :: 		Delay_us(1);
 	NOP
-;ADC.c,521 :: 		displayOn();
+;ADC.c,545 :: 		displayOn();
 	LCALL _displayOn+0
-;ADC.c,522 :: 		clear(0, 128);
+;ADC.c,546 :: 		clear(0, 128);
 	MOV FARG_clear_limit_left+0, #0
 	MOV FARG_clear_limit_left+1, #0
 	MOV FARG_clear_limit_right+0, #128
 	MOV FARG_clear_limit_right+1, #0
 	LCALL _clear+0
-;ADC.c,523 :: 		adc_result = 4000;
-	MOV main_adc_result_L0+0, #160
-	MOV main_adc_result_L0+1, #15
-;ADC.c,524 :: 		drawVLine(92);
-	MOV FARG_drawVLine_column+0, #92
-	MOV FARG_drawVLine_column+1, #0
-	LCALL _drawVLine+0
-;ADC.c,527 :: 		while(1) {
-L_main105:
-;ADC.c,528 :: 		*adc_data = adc_get_data(0);
-	MOV FARG_adc_get_data_channel+0, #0
-	MOV FARG_adc_get_data_channel+1, #0
-	MOV R3, #FLOC__main+0
-	LCALL _adc_get_data+0
-	MOV R3, #3
-	MOV R0, _adc_data+0
-	MOV R1, #FLOC__main+0
-L_main107:
-	MOV A, @R1
-	MOV @R0, A
-	MOV R2, #1
-	CLR C
-	MOV A, R3
-	SUBB A, R2
-	MOV R3, A
-	CLR A
-	SUBB A, R3
-	MOV R4, A
-	INC R0
-	INC R1
-	MOV A, R3
-	JNZ L_main107
-	MOV R0, _adc_data+0
-	MOV @R0, FLOC__main+0
-	INC R0
-	MOV @R0, FLOC__main+1
-;ADC.c,529 :: 		adc_result = parseADCValue(adc_data);
-	MOV FARG_parseADCValue_adc_data+0, _adc_data+0
-	LCALL _parseADCValue+0
-	MOV main_adc_result_L0+0, 0
-	MOV main_adc_result_L0+1, 1
-;ADC.c,531 :: 		clearHighValue();
-	LCALL _clearHighValue+0
-;ADC.c,532 :: 		drawHighValue(adc_result);
-	MOV FARG_drawHighValue_number+0, main_adc_result_L0+0
-	MOV FARG_drawHighValue_number+1, main_adc_result_L0+1
-	LCALL _drawHighValue+0
-;ADC.c,534 :: 		y = 64 - adc_result / LCD_Y_LIMIT;
-	MOV R2, #6
-	MOV A, main_adc_result_L0+1
-	MOV R0, main_adc_result_L0+0
-	INC R2
-	SJMP L__main141
-L__main142:
-	MOV C, #231
-	RRC A
-	XCH A, R0
-	RRC A
-	XCH A, R0
-L__main141:
-	DJNZ R2, L__main142
-	MOV R1, A
-	CLR C
-	MOV A, #64
-	SUBB A, R0
-	MOV FARG_drawPoint_y+0, A
-	MOV A, #0
-	SUBB A, R1
-	MOV FARG_drawPoint_y+1, A
-;ADC.c,535 :: 		y = y - 1;
-	CLR C
-	MOV A, FARG_drawPoint_y+0
-	SUBB A, #1
-	MOV FARG_drawPoint_y+0, A
-	MOV A, FARG_drawPoint_y+1
-	SUBB A, #0
-	MOV FARG_drawPoint_y+1, A
-;ADC.c,536 :: 		drawPoint(x, y, 0);
-	MOV FARG_drawPoint_x+0, main_x_L0+0
-	MOV FARG_drawPoint_x+1, main_x_L0+1
+;ADC.c,550 :: 		drawPoint(1, 1,0);
+	MOV FARG_drawPoint_x+0, #1
+	MOV FARG_drawPoint_x+1, #0
+	MOV FARG_drawPoint_y+0, #1
+	MOV FARG_drawPoint_y+1, #0
 	MOV FARG_drawPoint_flag+0, #0
 	MOV FARG_drawPoint_flag+1, #0
 	LCALL _drawPoint+0
-;ADC.c,537 :: 		x = x + 1;
-	MOV A, #1
-	ADD A, main_x_L0+0
-	MOV main_x_L0+0, A
-	MOV A, #0
-	ADDC A, main_x_L0+1
-	MOV main_x_L0+1, A
-;ADC.c,538 :: 		if (x == 92) {
-	MOV A, #92
-	XRL A, main_x_L0+0
-	JNZ L__main143
-	MOV A, #0
-	XRL A, main_x_L0+1
-L__main143:
-	JNZ L_main108
-;ADC.c,539 :: 		x = 0;
-	MOV main_x_L0+0, #0
-	MOV main_x_L0+1, #0
-;ADC.c,540 :: 		clear(0, 92);
-	MOV FARG_clear_limit_left+0, #0
-	MOV FARG_clear_limit_left+1, #0
-	MOV FARG_clear_limit_right+0, #92
-	MOV FARG_clear_limit_right+1, #0
-	LCALL _clear+0
-;ADC.c,541 :: 		}
-L_main108:
-;ADC.c,542 :: 		}
-	LJMP L_main105
-;ADC.c,543 :: 		}
+;ADC.c,552 :: 		drawPoint(10, 10,0);
+	MOV FARG_drawPoint_x+0, #10
+	MOV FARG_drawPoint_x+1, #0
+	MOV FARG_drawPoint_y+0, #10
+	MOV FARG_drawPoint_y+1, #0
+	MOV FARG_drawPoint_flag+0, #0
+	MOV FARG_drawPoint_flag+1, #0
+	LCALL _drawPoint+0
+;ADC.c,554 :: 		drawLine(1,10,1,11);
+	MOV FARG_drawLine_x0+0, #1
+	MOV FARG_drawLine_x0+1, #0
+	MOV FARG_drawLine_x1+0, #10
+	MOV FARG_drawLine_x1+1, #0
+	MOV FARG_drawLine_y0+0, #1
+	MOV FARG_drawLine_y0+1, #0
+	MOV FARG_drawLine_y1+0, #11
+	MOV FARG_drawLine_y1+1, #0
+	LCALL _drawLine+0
+;ADC.c,557 :: 		while(1) {
+L_main111:
+;ADC.c,572 :: 		}
+	SJMP L_main111
+;ADC.c,573 :: 		}
 	SJMP #254
 ; end of _main

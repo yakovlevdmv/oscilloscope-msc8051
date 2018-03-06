@@ -288,7 +288,7 @@ int clear(int limit_left, int limit_right) {
      if (limit_left >= limit_right) return -1;
 
      for(x = limit_left; x < limit_right; x++) {
-           for(y = 0; y <=64; y++) {
+           for(y = 0; y <=64; y=y+8) {
                   drawPoint(x, y, 1);
            }
      }
@@ -503,8 +503,30 @@ void clearHighValue() {
 
        }
 }
+//                 1,10,1,4
+void drawLine(int x0, int x1, int y0, int y1) {
+     int deltax, deltay, error, deltaerr, y, diry, x;
+     deltax = abs(x1 - x0); //9
+     deltay = abs(y1 - y0); //3
+     error = 0;
+     deltaerr = deltay;     //3
+     y = y0;                //1
+     diry = y1 - y0;        //3
+     if (diry > 0)
+         diry = 1;          //1
+     if (diry < 0)
+         diry = -1;
+     for (x = x0; x < x1; x++) {//ot 1 do 10
+         drawPoint(x, y, 0);     //       1,1 | 2,1 |
+         Delay_ms(1000);
+         error = error + deltaerr;     //  3  |  6  |
+         if (2 * error >= deltax) {    //  -  |  +  |
+             y = y + diry;            //     |
+             error = error - deltax;   //     |
+         }
+     }
 
-void drawLine()
+}
 
 void main() {
      char textBuffer[15];
@@ -522,12 +544,18 @@ void main() {
      //LCD
      displayOn();
      clear(0, 128);
-     adc_result = 4000;
-     drawVLine(92);
+     //adc_result = 4000;
+     //drawVLine(92);
+     
+     drawPoint(1, 1,0);
+     
+     drawPoint(10, 10,0);
+     
+     drawLine(1,10,1,11);
 
 
      while(1) {
-              *adc_data = adc_get_data(0);
+              /**adc_data = adc_get_data(0);
               adc_result = parseADCValue(adc_data);
               //clear(93, 128);
               clearHighValue();
@@ -540,6 +568,6 @@ void main() {
               if (x == 92) {
                     x = 0;
                     clear(0, 92);
-              }
+              }*/
      }
 }
