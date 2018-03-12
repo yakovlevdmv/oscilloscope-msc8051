@@ -52,9 +52,6 @@ struct rcv_data {
        short third;
 } *adc_data;
 
-
-
-//????????? ????? ??? GLCD ??????
 sbit LCD_CS1B at P2_2_bit;
 sbit LCD_CS2B at P2_3_bit;
 sbit LCD_RS   at P2_4_bit;
@@ -483,10 +480,10 @@ void clearHighValue() {
 }
 
 int Abs(int num) {
-	if(num < 0)
-		return -num;
-	else
-		return num;
+        if(num < 0)
+                return -num;
+        else
+                return num;
 }
 
 void Brezenhem(int x0, int y0, int x1, int y1)
@@ -497,17 +494,17 @@ void Brezenhem(int x0, int y0, int x1, int y1)
      A = y1 - y0;
      B = x0 - x1;
      if (abs(A) > abs(B))
-	sign = 1;
+        sign = 1;
      else
-	sign = -1;
+        sign = -1;
      if (A < 0)
-	  signa = -1;
+          signa = -1;
      else
-	  signa = 1;
+          signa = 1;
      if (B < 0)
-	  signb = -1;
+          signb = -1;
      else
-	  signb = 1;
+          signb = 1;
      drawPoint(x0,y0, 0);
      x = x0;
      y = y0;
@@ -544,15 +541,11 @@ void main() {
      int y = 0;
      int x = 0;
      float inputValue = 0;
-     float k = 0;
-     int prevx;
-     int prevy;
-
-     prevx=0;
-     prevy=0;
+     int speed = 1;
+     int pressed = -1;
+     P3=0;
 
      initSPI();
-     rs232init();
 
      CS = 1;
      Delay_us(1);
@@ -560,43 +553,44 @@ void main() {
      //LCD
      displayOn();
      clear(0, 128);
+     
      drawVLine(92);
 
      while(1) {
-     drawPoint(1,1,0);
-     drawPoint(1,40,0);
-//              Brezenhem(1, 1, 1, 40);
-//              Brezenhem(10, 15, 17, 25);
+
+              
               *adc_data = adc_get_data(0);
               adc_result = parseADCValue(adc_data);
               inputValue = getInputValue(adc_result);
 
+
               y = 64 - adc_result / LCD_Y_LIMIT;
               y = y - 1;
-              if(x == 0) {
-                   prevx = x;
-                   prevy = y;
-              } else if (x > 0) {
-                    Brezenhem(prevx, prevy, x, y);
-                    prevx = x;
-                    prevy = y;
-              }
-              //drawPoint(x, y, 0);
+              drawPoint(x, y, 0);
               x = x + 1;
-              if (x == 92) {
+              if (x == 128) {
                     x = 0;
-                    clear(0, 92);
+                    clear(0, 128);
               }
 
-              *adc_data = adc_get_data(1);
-              adc_result = parseADCValue(adc_data);
-              k = getGain(adc_result);
-              k = inputValue * k;
-
-              clear(93, 128);
-              clearHighValue();
-              drawHighValue(k);
-
-
+               if(P3_0_bit == 1) {
+                          if (pressed == -1) {
+                                  speed = speed + 1;
+                          }
+                          pressed = 0;
+              } else if(P3_0_bit == 0 && P3_1_bit != 1) {
+                        pressed = -1;
+              } else if(P3_1_bit == 1) {
+                          if (pressed == -1 && speed > 0) {
+                                  speed = speed - 1;
+                          }
+                          pressed = 0;
+              }  else if(P3_1_bit == 0) {
+                        pressed = -1;
+              } else {
+                      pressed = -1;
+              }
+              
+              Vdelay_ms(speed);
      }
 }
