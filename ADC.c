@@ -7,7 +7,23 @@
  * permission of Hlib Nekrasov
  *******************************************************/
 
-sbit CS at P2_0_bit;
+ sbit CS at P2_0_bit;
+
+const int LCD_X_LIMIT = 128;
+const int LCD_Y_LIMIT = 64;
+const float VREF = 4.096;
+
+struct rcv_data {
+       short first;
+       short second;
+       short third;
+       short fourth;
+} adc_data;
+
+typedef union {
+        struct rcv_data adc;
+        long c_data;
+} converter;
 
 sbit LCD_CS1B at P2_2_bit;
 sbit LCD_CS2B at P2_3_bit;
@@ -25,18 +41,6 @@ sbit LCD_D4 at P0_4_bit;
 sbit LCD_D5 at P0_5_bit;
 sbit LCD_D6 at P0_6_bit;
 sbit LCD_D7 at P0_7_bit;
-
-const int LCD_X_LIMIT = 128;
-const int LCD_Y_LIMIT = 64;
-const float VREF = 4.096;
-
-struct rcv_data {
-       short first;
-       short second;
-       short third;
-} *adc_data;
-
-
 
 void setXAddress(int x) {
      LCD_EN = 0;
@@ -119,6 +123,7 @@ void drawPoint(int x, int y, int flag) {
          mask = mask << 1;
      }
      writeData(mask);
+     //Delay_ms(1000);
      LCD_EN = 0;
 }
 
@@ -182,6 +187,31 @@ void initSPI() {
      SPCR = 0b01010011;
 }
 
+void rs232init() {
+     PCON = 0x80;
+     TMOD = 0x022;
+     TCON = 0x40;
+     SCON = 0x50;
+     TH1 = 0x0F5;
+     P3 = 0x003;
+     TR1_bit=1;
+}
+
+void transmit(char b) {
+     SBUF = b;
+     while(TI_bit == 0) {}
+     TI_bit = 0;
+
+}
+
+void transmitString(char* str) {
+       char *p = &str[0];
+
+       while (*p) {
+            transmit(*(p++));
+       }
+}
+
 void writeSPI(int _data) {
      SPDR = _data;
 }
@@ -191,6 +221,10 @@ int readSPI() {
     int _data;
     _data = SPDR;
     return _data;
+}
+
+void delay() {
+    Delay_ms(1000);
 }
 
 struct rcv_data adc_get_data(int channel) {
@@ -250,42 +284,26 @@ int parseADCValue(struct rcv_data *adc_data) {
 }
 
 void main() {
-     char textBuffer[15];
      int adc_result;
      int y = 0;
      int x = 0;
-     int speed = 1;
-     int pressed = -1;
-     int pause = 0;
-     int pause_pressed = -1;
+     float inputValue = 0;
+     float k = 0;
+     int prevx;
+     int prevy;
+
+     initSPI();
 
      CS = 1;
-     P3=0;
      Delay_us(1);
 
      //LCD
-     initSPI();
      displayOn();
      clear(0, 128);
 
      while(1) {
-              if(pause == 1 && x == 127) {
-                       if(P3_2_bit == 1) {
-                              if (pause_pressed == -1) {
-                                 if(pause == 0){
-                                          pause = 1;
-                                 } else {
-                                        pause = 0;
-                                 }
-                              }
-                              pause_pressed = 0;
-                        } else if(P3_2_bit == 0){
-                                pause_pressed = -1;
-                        }
-                       continue;
-              } else {
-              *adc_data = adc_get_data(0);
-              adc_result = parseADCValue(adc_data);
+              adc_data = adc_get_data(0);
+              adc_result = parseADCValue(&adc_data);
 
               y = 64 - adc_result / LCD_Y_LIMIT;
               y = y - 1;
@@ -294,40 +312,6 @@ void main() {
               if (x == 128) {
                     x = 0;
                     clear(0, 128);
-              }
-              
-              if(P3_2_bit == 1) {
-                    if (pause_pressed == -1) {
-                       if(pause == 0){
-                                pause = 1;
-                       } else {
-                              pause = 0;
-                       }
-                    }
-                    pause_pressed = 0;
-              } else if(P3_2_bit == 0){
-                      pause_pressed = -1;
-              }
-
-              if(P3_0_bit == 1) {
-                          if (pressed == -1) {
-                                  speed = speed + 1;
-                          }
-                          pressed = 0;
-              } else if(P3_0_bit == 0 && P3_1_bit != 1) {
-                        pressed = -1;
-              } else if(P3_1_bit == 1) {
-                          if (pressed == -1 && speed > 0) {
-                                  speed = speed - 1;
-                          }
-                          pressed = 0;
-              } else if(P3_1_bit == 0) {
-                        pressed = -1;
-              } else {
-                      pressed = -1;
-              }
-              
-              Vdelay_ms(speed);
               }
      }
 }
