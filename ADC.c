@@ -1,3 +1,5 @@
+
+
  /*******************************************************
  * Copyright (C) Hlib Nekrasov (email:ganekrasov@edu.hse.ru)
  *
@@ -7,23 +9,13 @@
  * permission of Hlib Nekrasov
  *******************************************************/
 
- sbit CS at P2_0_bit;
+sbit CS at P2_0_bit;
 
-const int LCD_X_LIMIT = 128;
-const int LCD_Y_LIMIT = 64;
+const short LCD_X_LIMIT = 128;
+const short LCD_Y_LIMIT = 64;
 const float VREF = 4.096;
 
-struct rcv_data {
-       short first;
-       short second;
-       short third;
-       short fourth;
-} adc_data;
-
-typedef union {
-        struct rcv_data adc;
-        long c_data;
-} converter;
+short first, second, third;
 
 sbit LCD_CS1B at P2_2_bit;
 sbit LCD_CS2B at P2_3_bit;
@@ -227,70 +219,125 @@ void delay() {
     Delay_ms(1000);
 }
 
-struct rcv_data adc_get_data(int channel) {
-         struct rcv_data _data;
-         int SPI_init_data = 0b11000000;
-         if(channel == 0) {
-                    SPI_init_data += 0b00000000;
-         } else if(channel == 1) {
-                    SPI_init_data += 0b00001000;
-         } else if(channel == 2) {
-                    SPI_init_data += 0b00010000;
-         } else if(channel == 3) {
-                    SPI_init_data += 0b00011000;
-         }
-         P0 = SPI_init_data;
+short adc_get_data() {
+
          CS = 0;
 
-
-         writeSPI(SPI_init_data);
+         SPDR = 0b11000000;
          while(SPIF_bit != 1) {}
-         _data.first = readSPI();
+         first = SPDR;
 
-         writeSPI(0b00000000);
+         SPDR = 0b00000000;
          while(SPIF_bit != 1) {}
-         _data.second = readSPI();
+         second = SPDR;
 
-         writeSPI(0b00000000);
+         SPDR = 0b00000000;
          while(SPIF_bit != 1) {}
-         _data.third = readSPI();
+         third = SPDR;
 
          CS = 1;
 
-         return _data;
+         first  = first & 0b00000001;
+         //second = 0b11111111;
+         third  = third & 0b11100000;
+         asm {
+               MOV R0, _first+0
+               MOV R1, _second+0
+               MOV R2, _third+0
+               MOV R3, #5
+
+               ;Сдвиг первого байта вправо на 1
+               MOV A, R0 ; R0 -> A
+               RRC A     ; Сдвиг A вправо
+               MOV R0, A
+               SHIFT: ;Сдвиг
+                   MOV A, R1 ;
+                   RRC A     ;
+                   MOV R1, A
+                   MOV A, R2 ;
+                   RRC A      ;
+                   MOV R2, A  ;
+                   MOV A, R3
+                   DEC A
+                   MOV R3, A
+               JNZ SHIFT
+
+               MOV _first, R0
+               MOV _second, R1
+               MOV _third, R2
+           }
+           return LCD_Y_LIMIT - ((second * 256 + third) / LCD_Y_LIMIT);//Деленное на LCD limit = 64 ==>> 256/64 = 4
+
 }
 
-int getBit(int position, int byte) {
-    return (byte >> position) & 1;
+int Abs(int num) {
+	if(num < 0)
+		return -num;
+	else
+		return num;
 }
 
-int parseADCValue(struct rcv_data *adc_data) {
-    int result = 0b000000000000;
-    int i = 0;
-    //First byte
-    result += getBit(0, adc_data->first);
-    //Second byte
-    for(i = 7; i >= 0; i--) {
-          result <<= 1;
-          result += getBit(i, adc_data->second);
-    }
-    //Third
-    for (i = 7; i >=5; i--) {
-        result <<= 1;
-        result += getBit(i, adc_data->third);
-    }
-
-    return result;
+void Brezenhem(int x0, int y0, int x1, int y1)
+{
+     int A, B, sign, signa, signb;
+     int x, y;
+     int f = 0;
+     A = y1 - y0;
+     B = x0 - x1;
+     if (abs(A) > abs(B))
+	sign = 1;
+     else
+	sign = -1;
+     if (A < 0)
+	  signa = -1;
+     else
+	  signa = 1;
+     if (B < 0)
+	  signb = -1;
+     else
+	  signb = 1;
+     drawPoint(x0,y0, 0);
+     x = x0;
+     y = y0;
+     if (sign == -1)
+     {
+      do {
+         f += A*signa;
+         if (f > 0)
+         {
+            f -= B*signb;
+            y += signa;
+         }
+         x -= signb;
+         drawPoint(x, y, 0);
+    } while (x != x1 || y != y1);
+  }
+  else
+  {
+    do {
+      f += B*signb;
+      if (f > 0) {
+        f -= A*signa;
+        x -= signb;
+      }
+      y += signa;
+      drawPoint(x, y, 0);
+    } while (x != x1 || y != y1);
+  }
 }
 
 void main() {
-     int adc_result;
-     int y = 0;
-     int x = 0;
-     float inputValue = 0;
-     float k = 0;
+     idata unsigned short adc_buffer[128];
+     char buffer[15];
+     short adc_result;
+     short y = 0;
+     unsigned short x = 0;
+     
      int prevx;
      int prevy;
+
+     prevx=0;
+     prevy=0;
 
      initSPI();
 
@@ -300,18 +347,30 @@ void main() {
      //LCD
      displayOn();
      clear(0, 128);
-
+     
      while(1) {
-              adc_data = adc_get_data(0);
-              adc_result = parseADCValue(&adc_data);
-
-              y = 64 - adc_result / LCD_Y_LIMIT;
-              y = y - 1;
-              drawPoint(x, y, 0);
-              x = x + 1;
-              if (x == 128) {
-                    x = 0;
-                    clear(0, 128);
+              if(x < 128) {
+                   P3_1_bit = 1;
+                   adc_buffer[x] = adc_get_data();
+                   x = x + 1;
+                   P3_1_bit = 0;
+              } else {
+                   x = 0;
+                   for(; x < 128; x++) {
+                        y = adc_buffer[x];
+                        y = y - 1;
+                        if(x == 0) {
+                             prevx = x;
+                             prevy = y;
+                        } else if (x > 0) {
+                             Brezenhem(prevx, prevy, x, y);
+                             prevx = x;
+                             prevy = y;
+                        }
+                   }
+                   Delay_ms(500);
+                   x = 0;
+                   clear(0, 128);
               }
      }
 }
